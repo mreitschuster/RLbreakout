@@ -3,6 +3,7 @@
 """
 @author: mreitschuster
 """
+seed=123
 
 import gym
 import time
@@ -20,10 +21,11 @@ import os
 model = PPO(policy          = 'CnnPolicy', 
             env             = env,     
             verbose         = 1, 
+            seed            = seed,
             tensorboard_log = os.path.expanduser('~/models/breakout-v4/tb_log/'))
 
-model.learn(total_timesteps = 1e4,
-            tb_log_name     = 'default PPO-CNN')
+model.learn(total_timesteps = 2e5,
+            tb_log_name     = '1.3_train')
 
 
 #%% Let's see how it plays
