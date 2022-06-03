@@ -11,9 +11,8 @@ For me I felt RAM is the restriction and 12 or more environments would make my s
 
 Much better. Instead of an average of 1 reward per episode - 1 block hit before dropping the ball - we get up to 5 with a promising trajectory.
 
-
 Better. Not great.
-
+![2.1v1.3r_ep_rew_mean.png](../pictures/2.1v1.3r_ep_rew_mean.png?raw=true)
 
 # 2.2_callbacks.py
 We want to see evaluation metrics - i.e. using the trained model on a different environment (similar to evaluting on test not training data in non RL). It is necessary that the evaluation environment has the same structure - the same observation_space and action_space, so we need to apply the same wrappers.
@@ -48,7 +47,7 @@ python train.py --algo ppo --env Breakout-v4 --tensorboard-log ~/models/breakout
 
 To understand what the zoo does I used the debugger and walked through the code with it. I made some annotations in my code pointing to the corresponding lines in the zoo code. The code 2.3_copying_hp_zoo.py is intended to give you the same result as running zoo on breakout with PPO and all parameters as default.
 
-![Alt text](../pictures/2.3_zoo_vs_copied.png?raw=true "Original Zoo vs 2.3_copying_hp_zoo.py")
+![Original Zoo vs 2.3_copying_hp_zoo.py](../pictures/2.3_zoo_vs_copied.png?raw=true)
 
 ## Hyperparameters
 We havent done any hyperparameter tuning so far. But luckily we can just cheat and copy some known-to-work parameters from [stable-baselines3-zoo's PPO hyperparameters](https://github.com/DLR-RM/rl-baselines3-zoo/blob/master/hyperparams/ppo.yml).
@@ -58,7 +57,7 @@ Zoo uses the [Atari wrapper](https://stable-baselines3.readthedocs.io/en/master/
 
 ## linear_schedule
 Learning rate and clip rate are defined as functions, not numbers. Both scale linearly down to 0 at the last timestep. This can be observed in tensorboard.
-ADD PICTURE LINK
+![2.3_learning_rate.png](../pictures/2.3_learning_rate.png?raw=true)
 
 
 
