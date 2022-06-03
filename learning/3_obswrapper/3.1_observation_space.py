@@ -46,7 +46,7 @@ def create_env(env_id, n_envs, seed, frame_stack):
     new_env = VecTransposeImage(new_env)           # line 578 in exp_manager.py
     return new_env
     
-train_env = create_env(env_id=env_id, n_envs=n_envs, seed=seed, frame_stack=frame_stack)
+train_env = create_env(env_id=env_id, n_envs=1, seed=seed, frame_stack=frame_stack)
 
 
 #%% Loading existing baseline model
@@ -60,21 +60,28 @@ model.load(baselinemodel)
 
 #%% Let's see how it plays
 import time
-
+import numpy as np
 state = train_env.reset()
+image=train_env.render(mode='rgb_array')
 
-for step in range(int(1e3)):
-    # do something useful
+print(state.shape) # (1,4,84,84)   4 is framestack
+print(image.shape) # (210,160,3)   3 is colour channels
+
+#def prep_state(state):
+#    image_state=np.stack([state[0,0,:,:],state[0,0,:,:],state[0,0,:,:]],axis=2) # we stack the 1-colour channel 3 times to have a grey image in rgb
+#    return image_state
+
+for step in range(int(30)):
+
     action, _ = model.predict(state)
-    state, reward, done, info = train_env.step(action)
+    state, reward, done, info = train_env.step(action) # state is the picture after wrappers
+    image=train_env.render(mode='rgb_array')    # we want tp have access to the image of the underlying environment. 
     
-    image=train_env.render(mode='human')
-    time.sleep(0.1)
-
-    if done.all():
-        print('final reward:' + str(reward))
-        break
-        train_env.reset()
+from PIL import Image
+im1 = Image.fromarray(state[0,0,:,:])
+im1.save(os.path.expanduser('~/models/breakout-v4/image/3.1_observation_space_afterWrapper.jpeg'))
+im2 = Image.fromarray(image)
+im2.save(os.path.expanduser('~/models/breakout-v4/image/3.1_observation_space_beforeWrapper.jpeg'))
         
 
 # Close the env

@@ -103,4 +103,3 @@ ep_rew_mean as well as the video show us that our model does poorly. But we have
 
 ![](../video/1.3_train.gif)
 
-![](../video/1.3_train.mp4)
