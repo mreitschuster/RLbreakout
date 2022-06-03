@@ -6,22 +6,8 @@
 # [3.1_observation_space.py](./3.1_observation_space.py)
 Our model gets the image from the game as observation_space - it sees what a human sees. If we use the Atari wrapper it will see a downsampled and trimmed image.
 
-![](../pictures/3.1_observation_space_afterWrapper.jpeg)
 
-![](../pictures/3.1_observation_space_beforeWrapper.jpeg)
-
-scaling1
-
-![](../pictures/3.1_observation_space_afterWrapper.jpeg =300x)
-
-![](../pictures/3.1_observation_space_beforeWrapper.jpeg =300x)
-
-
-scaling 2
-
-<img src="../pictures/3.1_observation_space_afterWrapper.jpeg" width="200" />
-
-<img src="../pictures/3.1_observation_space_beforeWrapper.jpeg" width="200" />
+<img src="../pictures/3.1_observation_space_afterWrapper.jpeg" width="400" /> <img src="../pictures/3.1_observation_space_beforeWrapper.jpeg" width="400" />
 
 
 ATARI wrappper vs original
