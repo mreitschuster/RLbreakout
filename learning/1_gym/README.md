@@ -99,7 +99,7 @@ Now you can open [tensorboard](http://localhost:6006/) in your browser. Here you
 Whenever you train a new model with the tensorboard_log parameter you will see the training process (almost) live in tensorboard. We are mostly intereset in rollout/ep_rew_mean, as this shows the average score per episode (until the ball is dropped).
 
 ## results
-ep_rew_mean as well as the video show us that our model does poorly. But we have setup all we need to get started - now we can focus on improving the model.
+ep_rew_mean as well as the video show us that our model performs poorly. But we have setup all we need to get started - now we can focus on improving the model.
 
-![](../video/1.3_train.gif)
-<img src="../video/1.3_train.gif" width="600" />
+
+<img src="../video/1.3_train.gif" width="500" />
