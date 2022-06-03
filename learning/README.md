@@ -10,14 +10,25 @@ In my own beginning I started using jupyter notebook, but then switched to a spy
 This is the very basic setup - getting a gym environment to run and train our very first, but not very effective model.
 
 # 2_model
+We understand what stable-baselines3-zoo does and reproduce it results with simpler code (for the specific case of PPO on Atari breakout).
 
 We take the first steps to optimizing our model, getting one that surpasses my personal capabilities as a casual player:
 - use multiple environments in parallel
 - adding a eval callback
 - using hyperparameters from stable-baselines3-zoo
-- adding a custom observation wrapper
 
 
 # 3
 
-Here we explore hyperparameter tuning, resampling late-game states and other models.
+- adding a custom observation wrapper
+- looking at atari wrapper
+- classical model
+
+# TODO
+
+explore hyperparameter tuning
+resampling late-game states
+noise for exploration
+other models
+on policy/off policy
+
