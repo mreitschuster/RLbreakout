@@ -12,6 +12,7 @@ For me I felt RAM is the restriction and 12 or more environments would make my s
 Much better. Instead of an average of 1 reward per episode - 1 block hit before dropping the ball - we get up to 5 with a promising trajectory.
 
 Better. Not great.
+
 ![2.1v1.3r_ep_rew_mean.png](../pictures/2.1v1.3r_ep_rew_mean.png?raw=true)
 
 # 2.2_callbacks.py
@@ -34,7 +35,7 @@ episode_infos
 ```
 episode_infos being None. So there (in breakout) is no such variable available. So let us stick with the mean reward.
 
-# 2.3_copying_hp_zoo.py
+# [2.3_copying_hp_zoo.py](./2.3_copying_hp_zoo.py)
 
 ## baseline zoo
 Our aim here is to understand and reproduce a well-performing example from [stable-baselines3-zoo](https://github.com/DLR-RM/rl-baselines3-zoo/). So let's first downlaod it and run it, so we have results to compare. To ensure this let's run the zoo. Be aware this takes a lot of time, as we aim to do 1e7 timesteps. For me it was half a day. Running with less timesteps will not provide same results as ctrl-c during training, due to the functional approach to learning rate and clipping. You can interupt it with ctrl+c - you will still have the best-model (until that step) and the beginning of the timeseries in tensorboard.
@@ -57,14 +58,8 @@ Zoo uses the [Atari wrapper](https://stable-baselines3.readthedocs.io/en/master/
 
 ## linear_schedule
 Learning rate and clip rate are defined as functions, not numbers. Both scale linearly down to 0 at the last timestep. This can be observed in tensorboard.
+
 ![2.3_learning_rate.png](../pictures/2.3_learning_rate.png?raw=true)
 
 
 
-
-# remarks
-
-Have a look at your the command line tool nvidia-smi. It tells you how much of you GPU memory is used.If you cannot train a model you might be out of memory. Check here and if necessary close some proceeses. I like having it update continously with the watch command:<br>
-<code>watch nvidia-smi</code><br>
-
-Your GPU memory will restrict how many models you can train at the same time.
