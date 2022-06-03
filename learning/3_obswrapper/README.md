@@ -14,7 +14,7 @@ So this looks smart - smaller input into our model 84x84x1 instead of 210x160x3,
 
 <img src="../pictures/3.1_observation_space_arrays_image.png" width="600" /><img src="../pictures/3.1_observation_space_arrays_state.png" width="600" />
 
-In the arrays we see that the downsampling *smears* the ball a bit. On the original array (right) we see clear cut 200 and 0 values, while on the state after the wrapper we see values in between.
+In the arrays we see that the downsampling *smears* the ball a bit. On the original array (right) I only show one colour channel. The others look the same. We see clear cut 200 and 0 values, while on the state after the wrapper we see values in between.
 
 
 # [3.2_aimbot.py](./3.2_aimbot.py)

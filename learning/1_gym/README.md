@@ -102,4 +102,4 @@ Whenever you train a new model with the tensorboard_log parameter you will see t
 ep_rew_mean as well as the video show us that our model does poorly. But we have setup all we need to get started - now we can focus on improving the model.
 
 ![](../video/1.3_train.gif)
-
+<img src="../video/1.3_train.gif)" width="600" />
