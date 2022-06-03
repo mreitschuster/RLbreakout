@@ -3,11 +3,11 @@ Here we aim to get a [gym environment](https://github.com/openai/gym) running an
 
 
 # TLDR
-<code>pip install gym pygame gym[atari]</code>
-
-<code>pip install stable-baselines3 stable-baselines3[extra]</code>
-
-<code>ale-import-roms /folder_with_rom/</code>
+```
+pip install gym pygame gym[atari]
+pip install stable-baselines3 stable-baselines3[extra]
+ale-import-roms /folder_with_rom/
+```
 
 
 
@@ -41,8 +41,10 @@ Let's do better than random steps. Let's train a model. For that we need to setu
 ## Conda Environments
 I did it using [anaconda](https://www.anaconda.com/). After installing anaconda create a new environment:
 
-<code>conda create --name gym -y</code><br>
-<code>conda activate gym</code><br>
+```
+conda create --name gym -y
+conda activate gym
+```
 
 From now on whenever we do something on the command line, assure you are in this conda environment. Packages you install inside a environment using conda or pip are only available when you are in the environment.<br>
 
@@ -52,16 +54,16 @@ Go to [pyTorch](https://pytorch.org/get-started/locally/) and do the necessary t
 
 ## Findings
 So let's run 1.3_train.py and train the model. The output shows us if it uses our GPU (cuda). Also it tells us some wrappers that have been automatically applied.<br>
-'''
+```
 Using cuda device
 Wrapping the env with a `Monitor` wrapper
 Wrapping the env in a DummyVecEnv.
 Wrapping the env in a VecTransposeImage.
-'''
+```
 <br>
 To optimize our model training process we will later test some more wrappers.
 
-'''
+```
 ----------------------------------------
 | rollout/                |            |
 |    ep_len_mean          | 58.2       |
@@ -83,19 +85,20 @@ To optimize our model training process we will later test some more wrappers.
 |    policy_gradient_loss | -0.105     |
 |    value_loss           | 0.0103     |
 ----------------------------------------
-'''
+```
 <br>
 This shows us some metrics during the training process. We can also explore them via a nice UI with tensorboard.
 
 ## tensorboard
-'''conda install -c conda-forge tensorboard'''
+```conda install -c conda-forge tensorboard```
 I install it not from the main conda channel, but from conda-forge (the -c parameter). In order to start it:<br>
 - make sure you are in the correct conda environment and in the folder in which you started<br>
 
 The code want to write into '~/models/breakout-v4/tb_log/', so make sure the folder exists. Then start tensorboard.<br>
-'''mkdir -R ~/models/breakout-v4/tb_log/
+```
+mkdir -R ~/models/breakout-v4/tb_log/
 tensorboard --logdir ~/models/breakout-v4/tb_log/
-'''
+```
 Now you can open [tensorboard](http://localhost:6006/) in your browser. Here you will see progress on our model.
 
 Whenever you train a new model with the tensorboard_log parameter you will see the training process (almost) live in tensorboard. We are mostly intereset in rollout/ep_rew_mean, as this shows the average score per episode (until the ball is dropped).

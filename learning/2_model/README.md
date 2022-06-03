@@ -19,7 +19,7 @@ Better. Not great.
 We want to see evaluation metrics - i.e. using the trained model on a different environment (similar to evaluting on test not training data in non RL). It is necessary that the evaluation environment has the same structure - the same observation_space and action_space, so we need to apply the same wrappers.
 
 Now in the model.learn step gym automatically wraps the (training-)env in a monitor and a VecTransposeImage wrapper. But the eval callback doesn't. After VecTransposeImage the dimensions of the observation space are reordered, so eval_env and env will have different shapes.
-'''UserWarning: Training and eval env are not of the same type'''
+```UserWarning: Training and eval env are not of the same type```
 
 So we wrap both manually in VecTransposeImage now. To avoid duplication I wrote a function to create the environment(s).
 
@@ -31,11 +31,11 @@ And more importantly we can learn from the zoo codebase. For that I tend to use 
 
 To ensure this let's run the zoo. Be aware this takes a lot of time, as we aim to do 1e7 timesteps. Running with less timesteps will not provide same results as ctrl-c during training, due to the functional approach to learning rate and clipping, as both scale linearly down to 0 at the last timestep.
 
-'''
+```
 git clone git@github.com:DLR-RM/rl-baselines3-zoo.git
 cd rl-baselines3-zoo
 python train.py --algo ppo --env Breakout-v4 --tensorboard-log /models/breakout-v4/tb_log/zoo
-'''
+```
 
 
 
