@@ -3,16 +3,11 @@ Here we aim to get a [gym environment](https://github.com/openai/gym) running an
 
 
 # TLDR
-```
-pip install gym pygame gym[atari]
-pip install stable-baselines3 stable-baselines3[extra]
-ale-import-roms /folder_with_rom/
-```
+
+We get a OpenAI gym reinforcement learning environment to visualize what is happening and train a model to play the game ATARI breakout.
 
 
-
-
-# 1.1_gym.py
+# [1.1_gym.py](./1.1_gym.py)
 This is the simplest algo - just taking a random step. We visualize it using env.render()
 
 In order to reproduce you need to
@@ -27,7 +22,7 @@ In order to reproduce you need to
 We see that it never reaches "done". This we will fix.
 
 
-# 1.2_wrapper.py
+# [1.2_wrapper.py](./1.2_wrapper.py)
 We add a wrapper that makes sure we reach done=True if we drop the ball. For this we need to install stable-baselines3.
 The [EpisodicLifeEnv](https://stable-baselines3.readthedocs.io/en/master/_modules/stable_baselines3/common/atari_wrappers.html#EpisodicLifeEnv) wrapper does this for us.
 
@@ -35,7 +30,7 @@ The [EpisodicLifeEnv](https://stable-baselines3.readthedocs.io/en/master/_module
 
 
 
-# 1.3_train.py
+# [1.3_train.py](./1.2_wrapper.py)
 Let's do better than random steps. Let's train a model. For that we need to setup our system. The following are suggestions based on how I do things.<br>
 
 ## Conda Environments
@@ -105,3 +100,7 @@ Whenever you train a new model with the tensorboard_log parameter you will see t
 
 ## results
 ep_rew_mean as well as the video show us that our model does poorly. But we have setup all we need to get started - now we can focus on improving the model.
+
+![](../video/1.3_train.gif)
+
+![](../video/1.3_train.mp4)

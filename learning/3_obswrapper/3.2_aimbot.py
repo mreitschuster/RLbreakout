@@ -1,24 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Created on Tue May 31 09:29:24 2022
+
 @author: mreitschuster
 """
 
-name_model='2.3_copying_hp_zoo'
+name_model='newModel'
 
 import os
-log_folder=os.path.expanduser('~/models/breakout-v4/log/'+name_model)
-model_folder=os.path.expanduser('~/models/breakout-v4/model/'+name_model)
+log_folder=os.path.expanduser('~/models/breakout-v4/logs/')
+model_folder=os.path.expanduser('~/models/breakout-v4/')
 tensorboard_folder=os.path.expanduser('~/models/breakout-v4/tb_log/')
 
 # env
 env_id                = 'Breakout-v4'
-n_envs                = 8
-frame_stack           = 4
+n_envs                = 1
 
 # model
 algo                  = 'ppo'
 policy                = 'CnnPolicy'
+#policy                = 'MlpPolicy' # needed as not a picture anymore?!
 n_steps               = 128
 n_epochs              = 4
 batch_size            = 256
@@ -34,21 +36,64 @@ n_eval_episodes=5
 n_eval_envs=1
 eval_freq=25000
 
+# hyper
+frame_stack = 4
+flag_plot=False
+flag_grey=True
+flag_trim=False
+
+prediction_colour=[255,255,255]
+prediction_height=3
+prediction_width=16
+
+flag_FireResetEnv=False
+flag_EpisodicLifeEnv=False
+flag_ClipRewardEnv=False
+MaxAndSkipEnv_skip=0
+
+
+# debug
+#n_envs = 1
+#flag_plot=True
+
+
+
 
 #%%
+import gym
+from breakout_wrapper import Breakout2dObservationWrapper
 
 from stable_baselines3.common.env_util import make_vec_env
-from stable_baselines3.common.atari_wrappers import AtariWrapper # this includes EpisodicLifeEnv
+from stable_baselines3.common.atari_wrappers import AtariWrapper,ClipRewardEnv,EpisodicLifeEnv,MaxAndSkipEnv, FireResetEnv
 from stable_baselines3.common.vec_env import DummyVecEnv
 from stable_baselines3.common.vec_env import VecFrameStack
 from stable_baselines3.common.vec_env import VecTransposeImage
 
+def wrapper_class(env):
+    env1 = Breakout2dObservationWrapper(env, 
+                                 flag_plot = flag_plot, 
+                                 flag_grey = flag_grey, 
+                                 flag_trim = flag_trim,
+                                 prediction_colour = prediction_colour,
+                                 prediction_height = prediction_height,
+                                 prediction_width  = prediction_width)
+    if flag_FireResetEnv:
+        env1 = FireResetEnv(env1)
+    if flag_EpisodicLifeEnv:
+        env1 = EpisodicLifeEnv(env1)
+    if flag_ClipRewardEnv:
+        env1 = ClipRewardEnv(env1)
+    if MaxAndSkipEnv_skip>0:
+        env1=MaxAndSkipEnv(env1, skip=MaxAndSkipEnv_skip)
+    
+    return(env1)
 
-def create_env(env_id, n_envs, seed, frame_stack):
+
+def create_env(env_id,n_envs=1,seed=123,frame_stack=4):
     new_env=make_vec_env(env_id        = env_id, 
                          n_envs        = n_envs, 
                          seed          = seed,
-                         wrapper_class = AtariWrapper,   # self.env_wrapper is function get_wrapper_class.<locals>.wrap_env  see line 104 in utils.py
+                         wrapper_class = wrapper_class,   # self.env_wrapper is function get_wrapper_class.<locals>.wrap_env  see line 104 in utils.py
                          vec_env_cls   = DummyVecEnv)    # self.vec_env_class is DummyVecEnv
     
     new_env = VecFrameStack(new_env, frame_stack)  # line 556 in exp_manager.py
@@ -57,12 +102,35 @@ def create_env(env_id, n_envs, seed, frame_stack):
     
 train_env = create_env(env_id=env_id, n_envs=n_envs, seed=seed, frame_stack=frame_stack)
 
+#%%
+    
+from stable_baselines3.common.callbacks import BaseCallback
+import numpy as np
 
+class MyGreatCustomCallback(BaseCallback):
+
+    def __init__(self, verbose=0):
+        super(MyGreatCustomCallback, self).__init__(verbose)
+        self.cum_reward = 0.
+        self.cum_done   = 0.
+        
+    def _on_step(self) -> bool:
+        reward  = np.mean(self.locals["rewards"])  # average over all environments
+        done    = np.mean(self.locals["dones"])
+
+        self.cum_reward = self.cum_reward + reward  
+        self.cum_done   = self.cum_done   + done
+        self.logger.record('custom/cum_reward', self.cum_reward)
+        self.logger.record('custom/cum_done', self.cum_done)
+        return True
+    
+instanceOfMyGreatCustomCallback = MyGreatCustomCallback()
 #%%
 from stable_baselines3.common.callbacks import EvalCallback
+# missing usage of SaveVecNormalizeCallback
 
 eval_callback = EvalCallback(create_env(env_id=env_id, n_envs=n_eval_envs, seed=seed, frame_stack=frame_stack),
-                             best_model_save_path=model_folder,
+                             best_model_save_path=log_folder,
                              n_eval_episodes=n_eval_episodes,
                              log_path=log_folder, 
                              eval_freq=max(eval_freq // n_envs, 1),
@@ -74,7 +142,7 @@ eval_callback = EvalCallback(create_env(env_id=env_id, n_envs=n_eval_envs, seed=
 # see _preprocess_hyperparams() line 168 in exp_manager.py
 # which uses _preprocess_schedules() line 286 in exp_manager.py
 # which uses linear_schedule() line 256 in utils.py
-from typing import  Callable, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 def linear_schedule(initial_value: Union[float, str]) -> Callable[[float], float]:
     if isinstance(initial_value, str):
@@ -91,6 +159,7 @@ clip_range_shedule    = linear_schedule(clip_range_initial)
 #%%
 
 from stable_baselines3 import PPO
+import torch
 
 model = PPO(policy, 
             train_env, 
@@ -108,7 +177,8 @@ model = PPO(policy,
 
 #%%
 model.learn(total_timesteps = n_timesteps,
-            callback        = eval_callback, 
+            #callback        = [eval_callback, precision_callback], 
+            callback        = [eval_callback,instanceOfMyGreatCustomCallback], 
             tb_log_name     = name_model)
 
 #%%
