@@ -10,9 +10,19 @@ Our model gets the image from the game as observation_space - it sees what a hum
 
 ![](../pictures/3.1_observation_space_beforeWrapper.jpeg)
 
+scaling1
+
 ![](../pictures/3.1_observation_space_afterWrapper.jpeg =300x)
 
 ![](../pictures/3.1_observation_space_beforeWrapper.jpeg =300x)
+
+
+scaling 2
+
+<img src="../pictures/3.1_observation_space_afterWrapper.jpeg" width="200" />
+
+<img src="../pictures/3.1_observation_space_beforeWrapper.jpeg" width="200" />
+
 
 ATARI wrappper vs original
 
