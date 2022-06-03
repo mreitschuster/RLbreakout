@@ -4,10 +4,15 @@
 [We already set up](../2_baseline) a baseline model which performs better than me. Our goal now is to improve the model to beat the game consistently.
 
 # [3.1_observation_space.py](./3.1_observation_space.py)
-Our model gets the image from the game as observation_space - it sees what a human sees. If we use the Atari wrapper it will see a downsampled and trimmed image.
-
+Our model gets the image from the game as observation_space - it sees what a human sees. On the left we see the state after the Atari wrapper - a downsampled, grey image.
+On the right we see the original image. When using env.render() we get the original image, I suspect this is because the wrapper hasn't implemented a render() function, so it falls back to the original environment.
 
 <img src="../pictures/3.1_observation_space_afterWrapper.jpeg" width="400" /> <img src="../pictures/3.1_observation_space_beforeWrapper.jpeg" width="400" />
+
+So this looks smart - smaller input into our model 84x84x1 instead of 210x160x3, without losing anything we deem necessary for gameplay.
+
+
+<img src="../pictures/3.1_observation_space_arrays.png" width="800" />
 
 
 ATARI wrappper vs original
