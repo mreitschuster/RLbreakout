@@ -19,7 +19,7 @@ In the arrays we see that the downsampling *smears* the ball a bit. On the origi
 # [3.2_observation_wrapper.py](./3.2_observation_wrapper.py)
 In this code we add an observation wrapper that trims the picture to the game area and greyscales/monochromes it, but in contrast to the stabel-baselines3's Atari Wrapper we keep the pixels 1:1 and don't downsample the image. For that we investigate the array picture and note down the boundaries in variables, which we hardcode in the init of the wrapper.
 
-<img src="../pictures/3.2_observation_wrapper_afterWrapper.jpeg" width="400" /><img src="../pictures/3.2_observation_wrapper_afterWrapper.jpeg" width="400" />
+<img src="../pictures/3.2_observation_wrapper_beforeWrapper.jpeg" width="400" /><img src="../pictures/3.2_observation_wrapper_afterWrapper.jpeg" width="400" />
 
 # [3.3_aimbot.py](./3.3_aimbot.py)
 Let's build an aimbot - a simple one, that only predicts a straight line. So it can only make a prediction, if the ball travels downwards and is already at a height, where no obstacles can be.
