@@ -19,6 +19,12 @@ In order to reproduce you need to
 
 <code>ale-import-roms /folder_with_rom/</code><br>
 
+- get the code
+<code>git clone https://github.com/mreitschuster/RLbreakout.git</code><br>
+
+- get an IDE
+<code>pip install spyder</code><br>
+
 We see that it never reaches "done". This we will fix.
 
 
