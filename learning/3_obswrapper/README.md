@@ -24,7 +24,7 @@ In this code we add an observation wrapper that trims the picture to the game ar
 # [3.3_aimbot.py](./3.3_aimbot.py)
 Let's build an aimbot - a simple one, that only predicts a straight line. So it can only make a prediction, if the ball travels downwards and is already at a height, where no obstacles can be.
 
-<img src="../pictures/3.3_aimbot_afterWrapper.jpeg" width="400" />&nbsp;&nbsp;&nbsp;<img src="../pictures/3.3.3_aimbot_afterWrapper_mono_whiten.jpeg" width="400" />
+<img src="../pictures/3.3_aimbot_afterWrapper.jpeg" width="400" />&nbsp;&nbsp;&nbsp;<img src="../pictures/3.3_aimbot_afterWrapper_mono_whiten.jpeg" width="400" />
 
 This time both pictures are after the wrapper - otherwise we couldn't see the prediction. The left is when we leave it 3 coloured and don't trim, the right picture is with removing border info and colours being mono.
 
@@ -36,3 +36,4 @@ I had also implemented the funcitonality to trim, reducing picture size. But une
 
 The previous code helped by visualizing the model. Now it is time to train the model and see how well it can perform with the different combinations of wrappers and flags.
 
+In addition to the previous step there is the wrapper_class_generator() that creates and hands over the combined wrapper, as make_vec_env() expects a function that takes no arguments, but we added flags to fine-tune the wrapper.

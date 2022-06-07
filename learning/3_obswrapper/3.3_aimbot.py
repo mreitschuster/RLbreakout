@@ -35,8 +35,8 @@ import gym
 import numpy as np
 class BreakoutObservationWrapper(gym.ObservationWrapper):
     def __init__(self, env, 
-                 flag_col='3col', 
-                 flag_dim='keep',
+                 flag_col='mono_1dim', 
+                 flag_dim='trim',
                  flag_predict='predict'
                  ):
         if not(flag_col in ['3col', 'grey_3dim', 'grey_1dim',  'mono_3dim', 'mono_1dim']):
