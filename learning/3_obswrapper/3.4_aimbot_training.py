@@ -5,17 +5,27 @@
 """
 seed=123
 
+
+flag_col     = 'mono_1dim'        # '3col', 'grey_3dim', 'grey_1dim',  'mono_3dim', 'mono_1dim'
+flag_dim     = 'whiten'        # 'blacken', 'whiten', 'keep', 'trim'
+flag_predict = 'predict'   # 'nopredict' , 'predict' 
+flag_EpisodicLifeEnv = True
+flag_FireResetEnv = False
+frame_stack = 4
+MaxAndSkipEnv_skip = 0
+name_model='3.4_aimbot_training_' + flag_col + '_' + flag_dim  + '_' + flag_predict + '_' +str(frame_stack) + 'fs_' +str(MaxAndSkipEnv_skip)+'es'
+
 import os
 tensorboard_folder=os.path.expanduser('~/models/breakout-v4/tb_log/')
 model_folder=os.path.expanduser('~/models/breakout-v4/model/')
-name_model='3.3_aimbot'
+
 image_folder=os.path.expanduser('~/models/breakout-v4/image/')
 
 
 # env
 env_id                = 'Breakout-v4'
 n_envs                = 8
-frame_stack           = 4
+
 
 # model
 algo                  = 'ppo'
@@ -29,22 +39,27 @@ clip_range_initial    = 0.1
 vf_coef               = 0.5
 ent_coef              = 0.01
 
+# eval
+n_eval_episodes=5
+n_eval_envs=1
+eval_freq=25000
+
 
 #%% new observation wrapper
 import gym
 import numpy as np
 class BreakoutObservationWrapper(gym.ObservationWrapper):
     def __init__(self, env, 
-                 flag_col='3col', 
-                 flag_dim='keep',
-                 flag_predict='predict'
+                 flag_col, 
+                 flag_dim,
+                 flag_predict
                  ):
         if not(flag_col in ['3col', 'grey_3dim', 'grey_1dim',  'mono_3dim', 'mono_1dim']):
                raise NameError('unknown value for flag_col')
         if not(flag_dim in ['blacken', 'whiten', 'keep', 'trim']):
                raise NameError('unknown value for flag_dim')
         if not(flag_predict in ['nopredict' , 'predict' ]):
-               raise NameError('unknown value for flag_predict')  
+               raise NameError('unknown value for flag_predict')     
                
         self.prediction_colour=[255,255,255] # painintg the prediction
         self.prediction_height=3
@@ -215,67 +230,117 @@ from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import DummyVecEnv
 from stable_baselines3.common.vec_env import VecFrameStack
 from stable_baselines3.common.vec_env import VecTransposeImage
+from stable_baselines3.common.atari_wrappers import AtariWrapper,ClipRewardEnv,EpisodicLifeEnv,MaxAndSkipEnv, FireResetEnv
 
-def create_env(env_id, n_envs, seed, frame_stack):
+
+def wrapper_class_generator(
+                  flag_col, 
+                  flag_dim, 
+                  flag_predict,
+                  flag_EpisodicLifeEnv,
+                  flag_FireResetEnv,
+                  MaxAndSkipEnv_skip):
+    
+    def wrap_env(env: gym.Env) -> gym.Env:
+
+    
+        if flag_EpisodicLifeEnv:
+            env = EpisodicLifeEnv(env)
+        if MaxAndSkipEnv_skip>0:
+            env=MaxAndSkipEnv(env, skip=MaxAndSkipEnv_skip)
+        # think about the order - which wrapper goes when
+        env = BreakoutObservationWrapper(env,                     
+                                         flag_col    = flag_col, 
+                                         flag_dim    = flag_dim, 
+                                         flag_predict = flag_predict)
+    
+        return(env)
+
+    return wrap_env # we return the function, not the result of the function
+
+
+def create_env(env_id, 
+               wrapper_class,
+               n_envs, 
+               seed, 
+               frame_stack):
+    
     new_env=make_vec_env(env_id        = env_id, 
                          n_envs        = n_envs, 
                          seed          = seed,
-                         wrapper_class = BreakoutObservationWrapper,   # self.env_wrapper is function get_wrapper_class.<locals>.wrap_env  see line 104 in utils.py
+                         wrapper_class = wrapper_class,   # self.env_wrapper is function get_wrapper_class.<locals>.wrap_env  see line 104 in utils.py
                          vec_env_cls   = DummyVecEnv)    # self.vec_env_class is DummyVecEnv
     
     new_env = VecFrameStack(new_env, frame_stack)  # line 556 in exp_manager.py
     new_env = VecTransposeImage(new_env)           # line 578 in exp_manager.py
     return new_env
     
-train_env = create_env(env_id=env_id, n_envs=1, seed=seed, frame_stack=frame_stack)
+#%%
+
+instance_wrapper_class=wrapper_class_generator(flag_col    = flag_col,
+                                               flag_dim    = flag_dim,
+                                               flag_predict = flag_predict,
+                                               flag_EpisodicLifeEnv = flag_EpisodicLifeEnv,
+                                               flag_FireResetEnv = flag_FireResetEnv,
+                                               MaxAndSkipEnv_skip = MaxAndSkipEnv_skip)
 
 
-#%% Loading existing baseline model
-
-from stable_baselines3 import PPO
-model = PPO(policy, train_env)
-baselinemodel=os.path.expanduser('~/models/breakout-v4/model/2.3_copying_hp_zoo/best_model.zip')
-assert os.path.exists(baselinemodel) # if it doesnt exist go back to 2.3_copying_hp_zoo.py
-model.load(baselinemodel)
-
-
-#%% Let's see how it plays
-import time
-import numpy as np
-state = train_env.reset()
-image=train_env.render(mode='rgb_array')
-
-print(state.shape) # (1,4,84,84)   4 is framestack
-print(image.shape) # (210,160,3)   3 is colour channels
-
-#def prep_state(state):
-#    image_state=np.stack([state[0,0,:,:],state[0,0,:,:],state[0,0,:,:]],axis=2) # we stack the 1-colour channel 3 times to have a grey image in rgb
-#    return image_state
-
-for step in range(int(23)): # we just want some in game pic
-
-    action, _ = model.predict(state)
-    state, reward, done, info = train_env.step(action) # state is the picture after wrappers
-    image=train_env.render(mode='rgb_array')    # we want tp have access to the image of the underlying environment. 
-    
-train_env.close()
+train_env = create_env(env_id=env_id, n_envs=n_envs, seed=seed, frame_stack=frame_stack, 
+                       wrapper_class=instance_wrapper_class)
+eval_env = create_env(env_id=env_id, n_envs=n_eval_envs, seed=seed, frame_stack=frame_stack, 
+                       wrapper_class=instance_wrapper_class)
 
 #%%
-from PIL import Image
+from stable_baselines3.common.callbacks import EvalCallback
 
-if state.shape[1]==12: # color + framestack on same dimension
-    arr_state=np.transpose(state[0,9:12,:,:],(1,2,0))
-elif state.shape[1]==4: # greyscale. 
-    arr_state=state[0,3,:,:] # the last of the 4 elements in the second dimension corresponds to current. the others are past.
-    if np.amax(arr_state)==1: # monoscale
-        arr_state=arr_state*255
-else:
-    raise NameError("i did not understand the dimensions of the array.")
+eval_callback = EvalCallback(eval_env,
+                             best_model_save_path=model_folder,
+                             n_eval_episodes=n_eval_episodes,
+                           #  log_path=log_folder, 
+                             eval_freq=max(eval_freq // n_envs, 1),
+                             deterministic=False, 
+                             render=False) # see exp_manager.py line 448
 
+#%%
+# create learning rate and clip rate functions
+# see _preprocess_hyperparams() line 168 in exp_manager.py
+# which uses _preprocess_schedules() line 286 in exp_manager.py
+# which uses linear_schedule() line 256 in utils.py
+from typing import  Callable, Union
 
-im1 = Image.fromarray(arr_state) 
-im1.save(image_folder+name_model+'_afterWrapper.jpeg')
+def linear_schedule(initial_value: Union[float, str]) -> Callable[[float], float]:
+    if isinstance(initial_value, str):
+        initial_value = float(initial_value)
 
-im2 = Image.fromarray(image)
-im2.save(image_folder+name_model+'_beforeWrapper.jpeg')
-        
+    def func(progress_remaining: float) -> float:
+        return progress_remaining * initial_value
+
+    return func
+
+learning_rate_shedule = linear_schedule(learning_rate_initial)
+clip_range_shedule    = linear_schedule(clip_range_initial)
+
+#%%
+
+from stable_baselines3 import PPO
+
+model = PPO(policy, 
+            train_env, 
+            n_steps        = n_steps,
+            n_epochs       = n_epochs,
+            batch_size     = batch_size,
+            learning_rate  = learning_rate_shedule,
+            clip_range     = clip_range_shedule,
+            vf_coef        = vf_coef,
+            ent_coef       = ent_coef,            
+            verbose        = 1, 
+            seed            = seed,
+            tensorboard_log = tensorboard_folder) # exp_manager.py line 185
+
+#%%
+model.learn(total_timesteps = n_timesteps,
+            callback        = eval_callback, 
+            tb_log_name     = name_model)
+
+#%%
+model.save(model_folder+name_model)

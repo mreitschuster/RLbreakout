@@ -24,12 +24,15 @@ In this code we add an observation wrapper that trims the picture to the game ar
 # [3.3_aimbot.py](./3.3_aimbot.py)
 Let's build an aimbot - a simple one, that only predicts a straight line. So it can only make a prediction, if the ball travels downwards and is already at a height, where no obstacles can be.
 
-<img src="../pictures/3.3_aimbot_afterWrapper.jpeg" width="400" />&nbsp;&nbsp;&nbsp;<img src="../pictures/3.3_aimbot_afterWrapper_mono_trimmed.jpeg" width="400" />
+<img src="../pictures/3.3_aimbot_afterWrapper.jpeg" width="400" />&nbsp;&nbsp;&nbsp;<img src="../pictures/3.3.3_aimbot_afterWrapper_mono_whiten.jpeg" width="400" />
 
-This time both pictures are after the wrapper - otherwise we couldn't see the prediction. The left is when we leave it 3 coloured and don't trim, the right picture is with trimming and mono.
+This time both pictures are after the wrapper - otherwise we couldn't see the prediction. The left is when we leave it 3 coloured and don't trim, the right picture is with removing border info and colours being mono.
+
+I had also implemented the funcitonality to trim, reducing picture size. But unexpectedly it reduced the scores significantly. I had a hunch it is because of the model and hyperparameters (which we copied from zoo) being optimized to the geometry of the input. But zoo used the Atari wrapper, so they also rescaled the picture. I ended up preserving picture size by just whitening the borders to remove the non-essential (and potentially confusing) information.
 
 
-# [3.4_training_aimbot.py](./3.4_training_aimbot.py)
+
+# [3.4_aimbot_training.py](./3.4_aimbot_training.py)
 
 The previous code helped by visualizing the model. Now it is time to train the model and see how well it can perform with the different combinations of wrappers and flags.
 
