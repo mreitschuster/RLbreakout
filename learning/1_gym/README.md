@@ -1,60 +1,21 @@
 
-Here we aim to get a [gym environment](https://github.com/openai/gym) running an interact with it.
-
-
-# TLDR
-
-We get a OpenAI gym reinforcement learning environment to visualize what is happening and train a model to play the game ATARI breakout.
-
+Here we aim to interact with a [gym environment](https://github.com/openai/gym).
+Make sure you have [setup your system](../_setup) the necessary tools.
 
 # [1.1_gym.py](./1.1_gym.py)
-This is the simplest algo - just taking a random step. We visualize it using env.render()
-
-In order to reproduce you need to
-- install OpenAI's gym<br>
-
-<code>pip install gym pygame gym[atari]</code><br>
-
-- install the ATARI Breakout Rom<br>
-
-<code>ale-import-roms /folder_with_rom/</code><br>
-
-- get the code
-<code>git clone https://github.com/mreitschuster/RLbreakout.git</code><br>
-
-- get an IDE
-<code>pip install spyder</code><br>
+This is the simplest algo - just taking a random step. We visualize it using env.render() and use spyder's debug functionality to walk through the code.
 
 We see that it never reaches "done". This we will fix.
 
 
 # [1.2_wrapper.py](./1.2_wrapper.py)
 We add a wrapper that makes sure we reach done=True if we drop the ball. For this we need to install stable-baselines3.
-The [EpisodicLifeEnv](https://stable-baselines3.readthedocs.io/en/master/_modules/stable_baselines3/common/atari_wrappers.html#EpisodicLifeEnv) wrapper does this for us.
+The [EpisodicLifeEnv](https://stable-baselines3.readthedocs.io/en/master/_modules/stable_baselines3/common/atari_wrappers.html#EpisodicLifeEnv) wrapper does this for us. It is a Atari specific wrapper. 
 
-<code>pip install stable-baselines3 stable-baselines3[extra]</code>
-
-
+[Later](../3_obswrapper) we will implement a custom wrapper that allows us simplify the way the model *sees* the environment, by removing colour and triming the picture. And we will add an aimbot - like a HUD for the model telling it where the ball will cut the panel' pane.
 
 # [1.3_train.py](./1.2_wrapper.py)
-Let's do better than random steps. Let's train a model. For that we need to setup our system. The following are suggestions based on how I do things.<br>
-
-## Conda Environments
-I did it using [anaconda](https://www.anaconda.com/). After installing anaconda create a new environment:
-
-```
-conda create --name rl -y
-conda activate rl
-```
-
-From now on whenever we do something on the command line, assure you are in this conda environment. Packages you install inside a environment using conda or pip are only available when you are in the environment.<br>
-
-## GPU
-Go to [pyTorch](https://pytorch.org/get-started/locally/) and do the necessary to get your pytorch running with either your CPU or GPU. For me it was <br>
-<code>conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch -y</code><br>
-
-## Findings
-So let's run 1.3_train.py and train the model. The output shows us if it uses our GPU (cuda). Also it tells us some wrappers that have been automatically applied.<br>
+Let's do better than random steps, by running 1.3_train.py and training a model. The output shows us if it uses our GPU (cuda). Also it tells us some wrappers that have been automatically applied.<br>
 ```
 Using cuda device
 Wrapping the env with a `Monitor` wrapper
@@ -89,11 +50,6 @@ To optimize our model training process we will later test some more wrappers.
 ```
 <br>
 This shows us some metrics during the training process. We can also explore them via a nice UI with tensorboard.
-
-## tensorboard
-```conda install -c conda-forge tensorboard```
-I install it not from the main conda channel, but from conda-forge (the -c parameter). In order to start it:<br>
-- make sure you are in the correct conda environment and in the folder in which you started<br>
 
 The code want to write into '~/models/breakout-v4/tb_log/', so make sure the folder exists. Then start tensorboard.<br>
 ```
