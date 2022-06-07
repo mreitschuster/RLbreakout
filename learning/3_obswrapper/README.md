@@ -24,12 +24,14 @@ In this code we add an observation wrapper that trims the picture to the game ar
 # [3.3_aimbot.py](./3.3_aimbot.py)
 Let's build an aimbot - a simple one, that only predicts a straight line. So it can only make a prediction, if the ball travels downwards and is already at a height, where no obstacles can be.
 
-<img src="../pictures/3.3_aimbot_afterWrapper.jpeg" width="400" />&nbsp;&nbsp;&nbsp;<img src="../pictures/3.3_aimbot_afterWrapper_mono_whiten.jpeg" width="400" />
+<img src="../pictures/3.3_aimbot_afterWrapper.jpeg" width="400" />&nbsp;&nbsp;&nbsp;<img src="../pictures/3.3_aimbot_afterWrapper_mono_trimmed.jpeg" width="400" />
 
 This time both pictures are after the wrapper - otherwise we couldn't see the prediction. The left is when we leave it 3 coloured and don't trim, the right picture is with removing border info and colours being mono.
 
-I had also implemented the funcitonality to trim, reducing picture size. But unexpectedly it reduced the scores significantly. I had a hunch it is because of the model and hyperparameters (which we copied from zoo) being optimized to the geometry of the input. But zoo used the Atari wrapper, so they also rescaled the picture. I ended up preserving picture size by just whitening the borders to remove the non-essential (and potentially confusing) information.
-
+I had some issues with unexpected results and suspected the hyperparameters being connected to the picture dimensions - especially the size of the kernel in the convolutional layers.
+- I had experimented with trimming the observation space as well as overwriting the border regions with black or white.
+- I experiemented with the number of colour channels (flag_col 'grey_3dim' or 'grey_1dim') - using a single channel should be enough for greyscale & mono, but it changes the third dimension. It seemed to me that framestack (from wrapper VecFrameStack) and frameskip (used in 3.4 and 2.3 from AtariWrapper and MaxAndSkipEnv) use the same dimension in the observation space array, so we needto be careful about the order in which we apply the wrappers.
+- Another suspect was EpisodicLifeEnv() not behaving as expected if it doesnt get the orignal observation_space, so it went before applying the custom wrapper.
 
 
 # [3.4_aimbot_training.py](./3.4_aimbot_training.py)

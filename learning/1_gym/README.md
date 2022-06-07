@@ -37,8 +37,8 @@ Let's do better than random steps. Let's train a model. For that we need to setu
 I did it using [anaconda](https://www.anaconda.com/). After installing anaconda create a new environment:
 
 ```
-conda create --name gym -y
-conda activate gym
+conda create --name rl -y
+conda activate rl
 ```
 
 From now on whenever we do something on the command line, assure you are in this conda environment. Packages you install inside a environment using conda or pip are only available when you are in the environment.<br>
