@@ -53,7 +53,7 @@ This shows us some metrics during the training process. We can also explore them
 
 The code want to write into '~/models/breakout-v4/tb_log/', so make sure the folder exists. Then start tensorboard.<br>
 ```
-mkdir -R ~/models/breakout-v4/tb_log/
+mkdir -p ~/models/breakout-v4/tb_log/
 tensorboard --logdir ~/models/breakout-v4/tb_log/
 ```
 Now you can open [tensorboard](http://localhost:6006/) in your browser. Here you will see progress on our model.

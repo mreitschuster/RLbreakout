@@ -43,9 +43,11 @@ episode_infos being None. So there (in breakout) is no such variable available. 
 Our aim here is to understand and reproduce a well-performing example from [stable-baselines3-zoo](https://github.com/DLR-RM/rl-baselines3-zoo/). So let's first downlaod it and run it, so we have results to compare. To ensure this let's run the zoo. Be aware this takes a lot of time, as we aim to do 1e7 timesteps. For me it was half a day. Running with less timesteps will not provide same results as ctrl-c during training, due to the functional approach to learning rate and clipping. You can interupt it with ctrl+c - you will still have the best-model (until that step) and the beginning of the timeseries in tensorboard.
 
 ```
-git clone git@github.com:DLR-RM/rl-baselines3-zoo.git
+sudo apt-get install swig cmake ffmpeg
+git clone https://github.com/DLR-RM/rl-baselines3-zoo.git
 cd rl-baselines3-zoo
-python train.py --algo ppo --env Breakout-v4 --tensorboard-log ~/models/breakout-v4/tb_log/zoo
+pip install -r requirements.txt
+python train.py --algo ppo --env Breakout-v4 -n 1000000 --seed 123 --tensorboard-log ~/models/breakout-v4/tb_log/zoo
 ```
 
 To understand what the zoo does I used the debugger and walked through the code with it. I made some annotations in my code pointing to the corresponding lines in the zoo code. The code 2.3_copying_hp_zoo.py is intended to give you the same result as running zoo on breakout with PPO and all parameters as default.

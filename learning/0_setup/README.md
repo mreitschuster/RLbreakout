@@ -21,7 +21,9 @@ From now on whenever we do something on the command line, assure you are in this
 
 
 ## IDE
-<code>conda install spyder==5.3.1 ipdb ipywidgets jupyter_client==7.3.1 ipython==7.33.0 ipykernel==6.13.0 spyder-kernels==2.3.1 python==3.9.13 tensorboard</code><br>
+```
+conda install spyder==5.3.1 ipdb ipywidgets jupyter_client==7.3.1 ipython==7.33.0 ipykernel==6.13.0 spyder-kernels==2.3.1 python==3.9.13 tensorboard
+```
 
 I struggled with the version and took a lot of time to get a working combination of version. Either the debugger is stuck (spyder 5.1.5)or *connecting to kernel* (ipykernel 6.13.1) takes forever, or no ipython shows up.
 
@@ -33,14 +35,18 @@ spyder
 
 ## pytorch on GPU
 Go to [pyTorch](https://pytorch.org/get-started/locally/) and do the necessary to get your pytorch running with either your CPU or GPU. For me it was <br>
-<code>conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch -y</code><br>
+```
+conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch -y
+```
 
 
 
 ## gym & ale & stable
 
 In order to reproduce you need to
-<code>pip install gym pygame gym[atari] ale-py stable-baselines3 stable-baselines3[extra]</code><br>
+```
+pip install gym pygame gym[atari] ale-py==0.7.4 stable-baselines3==1.5.0 stable-baselines3[extra] box3d
+```
 
 A [gym environment](https://github.com/openai/gym) provides us with a framework to bring games ( environments) together with with models, train them and interact with it. 
 
