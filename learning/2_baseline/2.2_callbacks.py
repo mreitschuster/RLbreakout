@@ -29,9 +29,14 @@ import os
 from stable_baselines3.common.callbacks import EvalCallback
 
 eval_callback = EvalCallback(eval_env,
+                             eval_freq=5000,
+                             deterministic=False, 
                              best_model_save_path=os.path.expanduser('~/models/breakout-v4/model/2.2_callbacks/')) 
 
-
+# deterministic
+# otherwise you will have games with 80k steps
+# Eval num_timesteps=80000, episode_reward=2.80 +/- 1.83
+# Episode length: 80062.40 +/- 39875.20
 
 #%% callback to save Atari scores
 
@@ -66,7 +71,7 @@ model = PPO(policy          = 'CnnPolicy',
             seed            = seed,
             tensorboard_log = os.path.expanduser('~/models/breakout-v4/tb_log/'))
 
-model.learn(total_timesteps = 2e5,
+model.learn(total_timesteps = 1e6,
             callback        = [eval_callback, instanceOfMyGreatCustomCallback], 
             #callback        = [eval_callback, MyGreatCustomCallback()],
             #callback        = instanceOfMyGreatCustomCallback, 

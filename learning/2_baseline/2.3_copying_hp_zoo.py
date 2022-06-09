@@ -4,7 +4,7 @@
 @author: mreitschuster
 """
 
-name_model='2.3_copying_hp_zoo'
+name_model='2.3_copying_hp_zoo_1e6'
 
 import os
 log_folder=os.path.expanduser('~/models/breakout-v4/log/'+name_model)
@@ -22,7 +22,7 @@ policy                = 'CnnPolicy'
 n_steps               = 128
 n_epochs              = 4
 batch_size            = 256
-n_timesteps           = 1e7
+n_timesteps           = 1e6
 learning_rate_initial = 2.5e-4
 clip_range_initial    = 0.1
 vf_coef               = 0.5

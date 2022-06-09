@@ -28,7 +28,7 @@ model = PPO(policy          = 'CnnPolicy',
             seed            = seed,
             tensorboard_log = os.path.expanduser('~/models/breakout-v4/tb_log/'))
 
-model.learn(total_timesteps = 1e7,
+model.learn(total_timesteps = 1e6,
             tb_log_name     = '2.1_envs')
 
 

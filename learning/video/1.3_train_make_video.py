@@ -49,9 +49,7 @@ for step in range(int(1e3)):
     action, _ = model.predict(state)
     state, reward, done, info = env.step(action)
     cum_reward=cum_reward+reward
-    image=env.render()
     video_recorder.capture_frame()
-    #time.sleep(0.1)
 
     if done:
         print('final reward:' + str(reward))

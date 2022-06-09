@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-@author: mreitschuster
-"""
+
 seed=123
 
 import gym
@@ -24,20 +22,19 @@ model = PPO(policy          = 'CnnPolicy',
             seed            = seed,
             tensorboard_log = os.path.expanduser('~/models/breakout-v4/tb_log/'))
 
-model.learn(total_timesteps = 2e5,
+model.learn(total_timesteps = 1e6,
             tb_log_name     = '1.3_train')
 
 
 #%% Let's see how it plays
 
-state=env.reset()
+obs=env.reset()
 
 for step in range(int(1e3)):
-    # do something useful
-    action, _ = model.predict(state)
-    state, reward, done, info = env.step(action)
+
+    action, _ = model.predict(obs)
+    obs, reward, done, info = env.step(action)
     
-    image=env.render()
     time.sleep(0.1)
 
     if done:
@@ -45,7 +42,4 @@ for step in range(int(1e3)):
         break
         env.reset()
         
-
-# Close the env
-# only this seems to be able to close the window in which the game was rendered
 env.close()

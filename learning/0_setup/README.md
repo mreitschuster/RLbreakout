@@ -22,7 +22,7 @@ From now on whenever we do something on the command line, assure you are in this
 
 ## IDE
 ```
-conda install spyder==5.3.1 ipdb ipywidgets jupyter_client==7.3.1 ipython==7.33.0 ipykernel==6.13.0 spyder-kernels==2.3.1 python==3.9.13 tensorboard
+conda install spyder==5.3.1 ipdb ipywidgets jupyter_client==7.3.1 ipython==7.33.0 ipykernel==6.13.0 spyder-kernels==2.3.1 python==3.9.13 tensorboard cloudpickle==2.1.0
 ```
 
 I struggled with the version and took a lot of time to get a working combination of version. Either the debugger is stuck (spyder 5.1.5)or *connecting to kernel* (ipykernel 6.13.1) takes forever, or no ipython shows up.

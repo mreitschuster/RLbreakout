@@ -60,7 +60,8 @@ for step in range(int(1e3)):
     video_recorder.capture_frame()
     #time.sleep(0.1)
 
-    if done:
+    if done.any():
+#    if done:   
         print('final reward:' + str(cum_reward))
         cum_reward=0
     #    break
