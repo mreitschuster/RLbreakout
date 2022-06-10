@@ -59,17 +59,12 @@ model.load(baselinemodel)
 
 
 #%% Let's see how it plays
-import time
-import numpy as np
 state = train_env.reset()
 image=train_env.render(mode='rgb_array')
 
 print(state.shape) # (1,4,84,84)   4 is framestack
 print(image.shape) # (210,160,3)   3 is colour channels
 
-#def prep_state(state):
-#    image_state=np.stack([state[0,0,:,:],state[0,0,:,:],state[0,0,:,:]],axis=2) # we stack the 1-colour channel 3 times to have a grey image in rgb
-#    return image_state
 
 for step in range(int(23)): # we just want some in game pic
 

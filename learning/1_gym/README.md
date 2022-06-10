@@ -1,6 +1,10 @@
 
-Here we aim to interact with a [gym environment](https://github.com/openai/gym).
-Make sure you have [setup your system](../_setup) the necessary tools.
+Goal: Interact with a [gym environment](https://github.com/openai/gym).
+Prerequisities: Make sure you have [setup your system](../_setup) the necessary tools.
+
+[![RL Breakout 1/5](../pictures/thumbnails/1_gym_thumbnail5.png)](https://youtu.be/DqzSCpKE-zk)
+
+
 
 # [1.1_gym.py](./1.1_gym.py)
 This is the simplest algo - just taking a random step. We visualize it using env.render() and use spyder's debug functionality to walk through the code.
