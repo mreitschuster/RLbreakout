@@ -1,7 +1,11 @@
 
 # TLDR
 
-[We already set up](../2_baseline) a baseline model which performs better than me. Our goal now is to improve the model to beat the game consistently.
+[We already set up](../2_baseline) a baseline model which performs better than me. Our goal now is to improve the model to beat the game consistently by adding an observation wrapper that serves as an aimbot. And some manual hyperparameter tuning.
+
+
+[![RL Breakout 3/5]](https://youtu.be/luRhvvOgEYk)
+
 
 # [3.1_observation_space.py](./3.1_observation_space.py)
 Our model gets the image from the game as observation_space - it sees what a human sees. On the left we see the state after the Atari wrapper - a downsampled, grey image.

@@ -8,7 +8,7 @@ seed=123
 import os
 tensorboard_folder=os.path.expanduser('~/models/breakout-v4/tb_log/')
 model_folder=os.path.expanduser('~/models/breakout-v4/model/')
-name_model='3.3_aimbot'
+name_model='3.2_observation_wrapper'
 image_folder=os.path.expanduser('~/models/breakout-v4/image/')
 
 
@@ -36,7 +36,7 @@ import numpy as np
 class BreakoutObservationWrapper(gym.ObservationWrapper):
     def __init__(self, env, 
                  flag_col='mono_1dim', 
-                 flag_dim='trim',
+                 flag_dim='blacken',
                  flag_predict='predict'
                  ):
         if not(flag_col in ['3col', 'grey_3dim', 'grey_1dim',  'mono_3dim', 'mono_1dim']):
@@ -44,7 +44,7 @@ class BreakoutObservationWrapper(gym.ObservationWrapper):
         if not(flag_dim in ['blacken', 'whiten', 'keep', 'trim']):
                raise NameError('unknown value for flag_dim')
         if not(flag_predict in ['nopredict' , 'predict' ]):
-               raise NameError('unknown value for flag_predict')  
+               raise NameError('unknown value for flag_predict')     
                
         self.prediction_colour=[255,255,255] # painintg the prediction
         self.prediction_height=3
@@ -141,7 +141,7 @@ class BreakoutObservationWrapper(gym.ObservationWrapper):
                         # even number of bounces -> preserve direction
                         rel_col_prediction=rel_col_prediction-bounces
                     else:
-                        rel_col_prediction=bounces+1+rel_col_prediction
+                        rel_col_prediction=bounces+1-rel_col_prediction
                     
                     predicted_impact_col_bounced = rel_col_prediction*col_size + self.screen_boundary_left
                 
@@ -231,51 +231,78 @@ train_env = create_env(env_id=env_id, n_envs=1, seed=seed, frame_stack=frame_sta
 
 
 #%% Loading existing baseline model
+def predict_simple(obs):
 
-from stable_baselines3 import PPO
-model = PPO(policy, train_env)
-baselinemodel=os.path.expanduser('~/models/breakout-v4/model/2.3_copying_hp_zoo/best_model.zip')
-assert os.path.exists(baselinemodel) # if it doesnt exist go back to 2.3_copying_hp_zoo.py
-model.load(baselinemodel)
+    # works only on blacken image
+    # action
+    # 0 nothing/game not started
+    # 1 nothing/game started
+    # 2 going right
+    # 3 going left
+    
+    action=1 # shoot/fire to start game
+    
+    image=obs[0,3,:,:]
+    
+    index_pad = np.where(image[189:192,:]>50)
+    if index_pad[0].size>0:
+        pad_location_col = np.mean(index_pad[1])
+    else:
+        raise NameError("didnt find the pad")
+    
+    index_pred = np.where(image[200:205,:]>50)
+    if index_pred[0].size>0:
+        pred_location_col = np.mean(index_pred[1])  
 
+        if pad_location_col<pred_location_col:
+            action=2 # going right
+        elif pad_location_col>pred_location_col:
+            action=3
+
+    return [action]
 
 #%% Let's see how it plays
 import time
 import numpy as np
-state = train_env.reset()
+obs = train_env.reset()
 image=train_env.render(mode='rgb_array')
 
-print(state.shape) # (1,4,84,84)   4 is framestack
+print(obs.shape) # (1,4,84,84)   4 is framestack
 print(image.shape) # (210,160,3)   3 is colour channels
 
-#def prep_state(state):
-#    image_state=np.stack([state[0,0,:,:],state[0,0,:,:],state[0,0,:,:]],axis=2) # we stack the 1-colour channel 3 times to have a grey image in rgb
-#    return image_state
 
-for step in range(int(23)): # we just want some in game pic
+import matplotlib.pyplot as plt
 
-    action, _ = model.predict(state)
-    state, reward, done, info = train_env.step(action) # state is the picture after wrappers
-    image=train_env.render(mode='rgb_array')    # we want tp have access to the image of the underlying environment. 
+for step in range(int(1e3)): # we just want some in game pice
+
+    action = predict_simple(obs)
+    print(action)
+    #action = [train_env.action_space.sample()]
+    obs, reward, done, info = train_env.step(action) # obs is the picture after wrappers
+
+    if np.mod(step,1)==0:
+        implt=plt.imshow(obs[0,3,:,:])
+        plt.show()
+        
     
 train_env.close()
 
 #%%
 from PIL import Image
 
-if state.shape[1]==12: # color + framestack on same dimension
-    arr_state=np.transpose(state[0,9:12,:,:],(1,2,0))
-elif state.shape[1]==4: # greyscale. 
-    arr_state=state[0,3,:,:] # the last of the 4 elements in the second dimension corresponds to current. the others are past.
-    if np.amax(arr_state)==1: # monoscale
-        arr_state=arr_state*255
+if obs.shape[1]==12: # color + framestack on same dimension
+    arr_obs=np.transpose(obs[0,9:12,:,:],(1,2,0))
+elif obs.shape[1]==4: # greyscale. 
+    arr_obs=obs[0,3,:,:] # the last of the 4 elements in the second dimension corresponds to current. the others are past.
+    if np.amax(arr_obs)==1: # monoscale
+        arr_obs=arr_obs*255
 else:
     raise NameError("i did not understand the dimensions of the array.")
 
 
-im1 = Image.fromarray(arr_state) 
-im1.save(image_folder+name_model+'_afterWrapper.jpeg')
+im1 = Image.fromarray(arr_obs) 
+im1.save(image_folder+name_model+'_obs.jpeg')
 
 im2 = Image.fromarray(image)
-im2.save(image_folder+name_model+'_beforeWrapper.jpeg')
+im2.save(image_folder+name_model+'_image.jpeg')
         

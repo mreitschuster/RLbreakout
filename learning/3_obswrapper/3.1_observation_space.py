@@ -59,17 +59,17 @@ model.load(baselinemodel)
 
 
 #%% Let's see how it plays
-state = train_env.reset()
+obs = train_env.reset()
 image=train_env.render(mode='rgb_array')
 
-print(state.shape) # (1,4,84,84)   4 is framestack
+print(obs.shape) # (1,4,84,84)   4 is framestack
 print(image.shape) # (210,160,3)   3 is colour channels
 
 
 for step in range(int(23)): # we just want some in game pic
 
-    action, _ = model.predict(state)
-    state, reward, done, info = train_env.step(action) # state is the picture after wrappers
+    action, _ = model.predict(obs)
+    obs, reward, done, info = train_env.step(action) # obs is the picture after wrappers
     image=train_env.render(mode='rgb_array')    # we want tp have access to the image of the underlying environment. 
     
 train_env.close()
@@ -77,12 +77,17 @@ train_env.close()
 #%%
 from PIL import Image
 
-im1 = Image.fromarray(state[0,3,:,:]) # the last of the 4 elements in the second dimension corresponds to current. the others are past.
-im1.save(os.path.expanduser('~/models/breakout-v4/image/3.1_observation_space_afterWrapper.jpeg'))
+im1 = Image.fromarray(obs[0,3,:,:]) # the last of the 4 elements in the second dimension corresponds to current. the others are past.
+im1.save(os.path.expanduser('~/models/breakout-v4/image/3.1_observation_space_arr_obs.jpeg'))
 
 
 im2 = Image.fromarray(image)
-im2.save(os.path.expanduser('~/models/breakout-v4/image/3.1_observation_space_beforeWrapper.jpeg'))
+im2.save(os.path.expanduser('~/models/breakout-v4/image/3.1_observation_space_arr_image.jpeg'))
         
-arr_state=state[0,3,:,:]
+arr_obs=obs[0,3,:,:]
 arr_image=image[:,:,0]
+
+#%%
+import numpy
+numpy.savetxt(os.path.expanduser('~/models/breakout-v4/csv/3.1_observation_space_arr_obs.csv'),arr_obs)
+numpy.savetxt(os.path.expanduser('~/models/breakout-v4/csv/3.1_observation_space_arr_image.csv'),arr_image)

@@ -3,23 +3,24 @@
 """
 @author: mreitschuster
 """
-seed=123
+seed=124
 
 
 flag_col     = 'mono_1dim'        # '3col', 'grey_3dim', 'grey_1dim',  'mono_3dim', 'mono_1dim'
-flag_dim     = 'whiten'        # 'blacken', 'whiten', 'keep', 'trim'
-flag_predict = 'predict'   # 'nopredict' , 'predict' 
+flag_dim     = 'trim'        # 'blacken', 'whiten', 'keep', 'trim'
+flag_predict = 'predict'   # 'nopredict' , 'predict' , 'predict_counters'
 flag_EpisodicLifeEnv = True
 flag_FireResetEnv = False
-frame_stack = 4
+frame_stack = 3
 MaxAndSkipEnv_skip = 0
-name_model='3.4_aimbot_training_' + flag_col + '_' + flag_dim  + '_' + flag_predict + '_' +str(frame_stack) + 'fs_' +str(MaxAndSkipEnv_skip)+'es'
+name_folder='3.3_aimbot_training'
+name_model=name_folder + '_' + flag_col + '_' + flag_dim  + '_' + flag_predict + '_' +str(frame_stack) + 'fs_' +str(MaxAndSkipEnv_skip)+'es'+'_seed'+str(seed)+'_1e7'
+
 
 import os
-tensorboard_folder=os.path.expanduser('~/models/breakout-v4/tb_log/')
-model_folder=os.path.expanduser('~/models/breakout-v4/model/')
-
-image_folder=os.path.expanduser('~/models/breakout-v4/image/')
+tensorboard_folder=os.path.expanduser('~/models/breakout-v4/tb_log/'+name_folder+'/')
+model_folder=os.path.expanduser('~/models/breakout-v4/model/'+name_folder+'/'+name_model+'/')
+image_folder=os.path.expanduser('~/models/breakout-v4/image/'+name_folder+'/'+name_model+'/')
 
 
 # env
@@ -33,7 +34,7 @@ policy                = 'CnnPolicy'
 n_steps               = 128
 n_epochs              = 4
 batch_size            = 256
-n_timesteps           = 1e6
+n_timesteps           = 1e7
 learning_rate_initial = 2.5e-4
 clip_range_initial    = 0.1
 vf_coef               = 0.5
@@ -58,7 +59,7 @@ class BreakoutObservationWrapper(gym.ObservationWrapper):
                raise NameError('unknown value for flag_col')
         if not(flag_dim in ['blacken', 'whiten', 'keep', 'trim']):
                raise NameError('unknown value for flag_dim')
-        if not(flag_predict in ['nopredict' , 'predict' ]):
+        if not(flag_predict in ['nopredict' , 'predict', 'predict_counters' ]):
                raise NameError('unknown value for flag_predict')     
                
         self.prediction_colour=[255,255,255] # painintg the prediction
@@ -112,8 +113,9 @@ class BreakoutObservationWrapper(gym.ObservationWrapper):
     def observation(self, obs):
         
         image = obs # we will need to overwrite some pixels
+        rel_col_prediction=None
         
-        if self.flag_predict == 'predict':
+        if self.flag_predict in ['predict', 'predict_counters']:
             # ball position
             # we only look into the freepane - the place where the ball can fly unobstructed
             ball_obs = image[self.ball_freepane_row_upper:self.ball_freepane_row_lower, 
@@ -156,7 +158,7 @@ class BreakoutObservationWrapper(gym.ObservationWrapper):
                         # even number of bounces -> preserve direction
                         rel_col_prediction=rel_col_prediction-bounces
                     else:
-                        rel_col_prediction=bounces+1+rel_col_prediction
+                        rel_col_prediction=bounces+1-rel_col_prediction
                     
                     predicted_impact_col_bounced = rel_col_prediction*col_size + self.screen_boundary_left
                 
@@ -165,6 +167,9 @@ class BreakoutObservationWrapper(gym.ObservationWrapper):
                     newbar2=round(predicted_impact_col_bounced+self.pred_pane_width/2)
                     image[self.pred_pane_row_upper:self.pred_pane_row_lower, newbar1:newbar2,:]=self.prediction_colour
                     prediction_possible=True
+                    
+                    
+                        
             
             if not(prediction_possible):
                 predicted_impact_col = None
@@ -178,6 +183,8 @@ class BreakoutObservationWrapper(gym.ObservationWrapper):
             # important we also do that if we dont make a prediciton!
             self.ball_last_col = ball_location_col
             self.ball_last_row = ball_location_row   
+                            
+                
         elif self.flag_predict == 'nopredict':
             _ = None
         else:
@@ -203,7 +210,27 @@ class BreakoutObservationWrapper(gym.ObservationWrapper):
         else:
             raise NameError("flag_dim value unknown")
          
-        
+        if self.flag_predict=='predict_counters':
+            image[0,0,:]=[0,0,0]
+            image[0,1,:]=[0,0,0]
+            image[0,2,:]=[0,0,0]
+            image[0,3,:]=[0,0,0]
+            image[0,4,:]=[0,0,0]
+            
+            if time_to_impact is not None:
+                image[0,0,:]=int(255*min(1,time_to_impact/10))
+            if rel_col_prediction is not None:
+                image[0,1,:]=int(255*predicted_impact_col_bounced)
+            if ball_location_col is not None:
+                image[0,2,:]=int(255*min(1,ball_location_col/160))
+            if ball_location_row is not None:
+                image[0,3,:]=int(255*min(1,ball_location_row/210))
+                
+            index_pad = np.where(image[self.padpane_row_upper:self.padpane_row_lower,:]>50)
+            pad_location_col = np.mean(index_pad[1])
+            image[0,4,:]=int(255*min(1,pad_location_col/160))
+
+                
         if self.flag_col=='3col':
             _ = None
         elif self.flag_col == 'grey_3dim':
@@ -221,6 +248,8 @@ class BreakoutObservationWrapper(gym.ObservationWrapper):
         else:
             raise NameError("flag_col value unknown")
             
+
+                
         return image
 
 
@@ -343,4 +372,4 @@ model.learn(total_timesteps = n_timesteps,
             tb_log_name     = name_model)
 
 #%%
-model.save(model_folder+name_model)
+model.save(model_folder+name_model+'.zip')

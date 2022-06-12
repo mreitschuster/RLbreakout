@@ -7,8 +7,8 @@
 name_model='2.3_copying_hp_zoo_1e6'
 
 import os
-log_folder=os.path.expanduser('~/models/breakout-v4/log/'+name_model)
-model_folder=os.path.expanduser('~/models/breakout-v4/model/'+name_model)
+log_folder=os.path.expanduser('~/models/breakout-v4/log/'+name_model+'/')
+model_folder=os.path.expanduser('~/models/breakout-v4/model/'+name_model+'/')
 tensorboard_folder=os.path.expanduser('~/models/breakout-v4/tb_log/')
 
 # env
@@ -112,4 +112,4 @@ model.learn(total_timesteps = n_timesteps,
             tb_log_name     = name_model)
 
 #%%
-model.save(model_folder+name_model)
+model.save(model_folder+name_model+'.zip')

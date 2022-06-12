@@ -5,6 +5,7 @@
 
 So now we improve the speed at which we train, evaluate the average score and reproduce a well-perfoming model. This will be our baseline for further improvements.
 
+[![RL Breakout 2/5]](https://youtu.be/RKd13RGI1Yg)
 
 # [2.1_envs.py](./2.1_envs.py)
 We can use multiple environments at the same time to train in parallel. I removed the piece of code rendering a game. You know how to do it.

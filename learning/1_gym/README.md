@@ -1,6 +1,7 @@
 
-Goal: Interact with a [gym environment](https://github.com/openai/gym).
-Prerequisities: Make sure you have [setup your system](../_setup) the necessary tools.
+**Goal**: Basic interaction with a [gym environment](https://github.com/openai/gym).
+
+**Prerequisities**: Make sure you have [setup your system](../_setup) the necessary tools.
 
 [![RL Breakout 1/5](../pictures/thumbnails/1_gym_thumbnail5.png)](https://youtu.be/DqzSCpKE-zk)
 
