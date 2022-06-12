@@ -4,7 +4,7 @@
 [We already set up](../2_baseline) a baseline model which performs better than me. Our goal now is to improve the model to beat the game consistently by adding an observation wrapper that serves as an aimbot. And some manual hyperparameter tuning.
 
 
-[![RL Breakout 3/5]](https://youtu.be/luRhvvOgEYk)
+[![RL Breakout 3/5](../pictures/thumbnails/3_obswrapper.png)](https://youtu.be/luRhvvOgEYk)
 
 
 # [3.1_observation_space.py](./3.1_observation_space.py)
