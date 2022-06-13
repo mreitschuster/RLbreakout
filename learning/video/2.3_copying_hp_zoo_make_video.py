@@ -39,8 +39,7 @@ env = create_env(env_id=env_id, n_envs=1, seed=seed, frame_stack=4)
 
 from stable_baselines3 import PPO
 
-model = PPO(policy,env) 
-model.load(model_folder)
+model = PPO.load(model_folder)
 
 #%% Let's see how it plays
 
@@ -51,7 +50,7 @@ video_recorder = VideoRecorder(env, video_file, enabled=True)
 
 state=env.reset()
 cum_reward=0
-for step in range(int(1e3)):
+for step in range(int(1500)):
     # do something useful
     action, _ = model.predict(state)
     state, reward, done, info = env.step(action)
@@ -61,10 +60,8 @@ for step in range(int(1e3)):
     #time.sleep(0.1)
 
     if done.any():
-#    if done:   
-        print('final reward:' + str(cum_reward))
-        cum_reward=0
-    #    break
+        print('final reward:' + str(cum_reward[done]))
+        cum_reward[done]=0
         env.reset()
         
         
