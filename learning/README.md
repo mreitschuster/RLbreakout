@@ -17,8 +17,7 @@ We understand what stable-baselines3-zoo does and reproduce it results with simp
 # 3_obswrapper
 We add an observation wrapper that removes colour information, trims the picture and adds an Aimbot - additional visual information about where the ball will cut the padel's pane. We then manually tune the framestack hyperparameter and see how the different fetaures of the observation wrapper perform. 
 
-This gets us to a model that gets average rewards of 250 per all lifes, trained with 1e7 timesteps (7 hours on my pc)
-https://user-images.githubusercontent.com/41780255/173306620-5c5b1723-987c-46d8-8d3d-935b3c62ea50.mp4
+This gets us to a model that gets average rewards of 200-400 per game(all 5 lifes), trained with 1e7 timesteps (7 hours on my pc)
 ![4 instances of Breakout being played into high scores](./video/3.3_aimbot_training_mono_1dim_trim_predict_3fs_0es_seed124_1e7.gif)
 
 # TODO
