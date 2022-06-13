@@ -13,7 +13,7 @@ We understand what stable-baselines3-zoo does and reproduce it results with simp
 - use multiple environments in parallel
 - adding an evalcallback and a custom callback
 - using hyperparameters from stable-baselines3-zoo, including functions for the learning and clip rate
-- 
+
 ![1 instance of Breakout being played into low scores](./video/2.3_copying_hp_zoo.gif)
 
 # 3_obswrapper
