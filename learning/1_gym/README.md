@@ -3,11 +3,9 @@
 
 **Prerequisities**: Make sure you have [setup your system](../_setup) the necessary tools.
 
+**Train RL model to play Breakout - Howto 1/5** Video link
 [![RL Breakout 1/5](../pictures/thumbnails/1_gym_thumbnail5.png)](https://youtu.be/DqzSCpKE-zk)
 
-<a href="[http://www.youtube.com/watch?feature=player_embedded&v=nTQUwghvy5Q](https://youtu.be/DqzSCpKE-zk)" target="_blank">
- <img src="../pictures/thumbnails/1_gym_thumbnail5.png" alt="Watch the video" width="240" height="180" border="10" />
-</a>
 
 # [1.1_gym.py](./1.1_gym.py)
 This is the simplest algo - just taking a random step. We visualize it using env.render() and use spyder's debug functionality to walk through the code.
