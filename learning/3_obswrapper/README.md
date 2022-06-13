@@ -3,7 +3,7 @@
 
 [We already set up](../2_baseline) a baseline model which performs better than me. Our goal now is to improve the model to beat the game consistently by adding an observation wrapper that serves as an aimbot. And some manual hyperparameter tuning.
 
-
+**Train RL model to play Breakout - Howto 3/5** Video link - click on the picture.
 [![RL Breakout 3/5](../pictures/thumbnails/3_obswrapper.png)](https://youtu.be/luRhvvOgEYk)
 
 
