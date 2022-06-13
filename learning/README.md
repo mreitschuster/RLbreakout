@@ -19,7 +19,7 @@ We add an observation wrapper that removes colour information, trims the picture
 
 This gets us to a model that gets average rewards of 250 per all lifes, trained with 1e7 timesteps (7 hours on my pc)
 https://user-images.githubusercontent.com/41780255/173306620-5c5b1723-987c-46d8-8d3d-935b3c62ea50.mp4
-
+![4 instances of Breakout being played into high scores](./video/3.3_aimbot_training_mono_1dim_trim_predict_3fs_0es_seed124_1e7.gif)
 
 # TODO
 
