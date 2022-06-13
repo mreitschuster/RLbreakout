@@ -5,6 +5,7 @@
 
 So now we improve the speed at which we train, evaluate the average score and reproduce a well-perfoming model. This will be our baseline for further improvements.
 
+**Train RL model to play Breakout - Howto 2/5** Video link - click on the picture.
 [![RL Breakout 2/5](../pictures/thumbnails/2_baseline_snapshot.png)](https://youtu.be/RKd13RGI1Yg)
 
 # [2.1_envs.py](./2.1_envs.py)
