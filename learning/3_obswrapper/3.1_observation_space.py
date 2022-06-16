@@ -52,10 +52,9 @@ train_env = create_env(env_id=env_id, n_envs=1, seed=seed, frame_stack=frame_sta
 #%% Loading existing baseline model
 
 from stable_baselines3 import PPO
-model = PPO(policy, train_env)
 baselinemodel=os.path.expanduser('~/models/breakout-v4/model/2.3_copying_hp_zoo/best_model.zip')
 assert os.path.exists(baselinemodel) # if it doesnt exist go back to 2.3_copying_hp_zoo.py
-model.load(baselinemodel)
+model = PPO.load(baselinemodel)
 
 
 #%% Let's see how it plays

@@ -1,6 +1,5 @@
 
-# TLDR
+# using zoo
 
-[We already set up](../2_baseline) a baseline model and then we added an [observation layer](../3_obswrapper) to focus on the main pieces of information - no colour and removing borders, as well as added an aimbot.
 
-Now we can look into hyperparameter tuning and model selection.
+python train.py --algo ppo --env Breakout-v4 -n 1000000 --seed 123 --tensorboard-log ~/models/breakout-v4/tb_log/zoo -optimize --optimization-log-path ~/models/breakout-v4/opt_log/zoo

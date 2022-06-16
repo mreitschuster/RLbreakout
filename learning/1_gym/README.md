@@ -8,13 +8,11 @@
 
 
 # [1.1_gym.py](./1.1_gym.py)
-This is the simplest algo - just taking a random step. We visualize it using env.render() and use spyder's debug functionality to walk through the code.
-
-We see that it never reaches "done". This we will fix.
+This is a simple algorithm - just take a random step and render the image and repeat. This shows the turn based approach. The step hands back the observation, a reward (if we hit a brick) and a done flag. We see that the game doesn't reach "done", when the ball is dropped. This we fix with a wrapper.
 
 
 # [1.2_wrapper.py](./1.2_wrapper.py)
-We add a wrapper that makes sure we reach done=True if we drop the ball. For this we need to install stable-baselines3.
+Wrappers can be seen as extensions and modifications to the environment. We add a wrapper that makes sure we reach done=True if we drop the ball. For this we need to install stable-baselines3.
 The [EpisodicLifeEnv](https://stable-baselines3.readthedocs.io/en/master/_modules/stable_baselines3/common/atari_wrappers.html#EpisodicLifeEnv) wrapper does this for us. It is a Atari specific wrapper. 
 
 [Later](../3_obswrapper) we will implement a custom wrapper that allows us simplify the way the model *sees* the environment, by removing colour and triming the picture. And we will add an aimbot - like a HUD for the model telling it where the ball will cut the panel' pane.
@@ -56,7 +54,7 @@ To optimize our model training process we will later test some more wrappers.
 <br>
 This shows us some metrics during the training process. We can also explore them via a nice UI with tensorboard.
 
-The code want to write into '~/models/breakout-v4/tb_log/', so make sure the folder exists. Then start tensorboard.<br>
+The code writes the tensorboard logs into '~/models/breakout-v4/tb_log/', so make sure the folder exists (or adjust the folder). Then start tensorboard.<br>
 ```
 mkdir -p ~/models/breakout-v4/tb_log/
 tensorboard --logdir ~/models/breakout-v4/tb_log/
