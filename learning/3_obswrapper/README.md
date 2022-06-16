@@ -26,7 +26,8 @@ In the arrays we see that the downsampling *smears* the ball a bit. On the origi
 In this code we add an observation wrapper that trims the picture to the game area and greyscales/monochromes it, but in contrast to the stabel-baselines3's Atari Wrapper we keep the pixels 1:1 and don't downsample the image. For that we investigate the array picture and note down the geometric layout in variables, which we hardcode in the init of the wrapper.
 
 ## Monoscale and Trim
-The trimming uses the hardcoded geometric parameters to cut away the sides and top. The monoscale projects everthing to white and black.
+The trimming uses the hardcoded geometric parameters to cut away the sides and top. The monoscale projects everthing to white and black. <br/>
+
 <img src="../pictures/3.2_observation_wrapper_beforeWrapper.jpeg" width="400" />&nbsp;&nbsp;&nbsp;<img src="../pictures/3.2_observation_wrapper_afterWrapper.jpeg" width="400" />
 
 ## Aimbot
@@ -47,6 +48,7 @@ I had some issues with unexpected results and suspected the hyperparameters bein
 The previous code helped by visualizing the model. Now it is time to train the model and see how well it can perform with the different combinations of wrappers and flags. In addition to the previous step there is the wrapper_class_generator() that creates and hands over the combined wrapper, as make_vec_env() expects a function that takes no arguments, but we added flags to fine-tune the wrapper.
 
 Ultimately I chose a framsetack of 3, trimming and monosclaing of the observation space and aimbot turned on. The tensorboard shows different training sessions of the same parameters with different seeds. This shows us that we need to expect quite some variation in the results.
+
 <img src="../pictures/3.3_tb_seeds.png" width="800" />
 
 We also explore the option of encoding individual variables into the picture as individual pixels:
