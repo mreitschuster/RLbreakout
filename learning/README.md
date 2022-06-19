@@ -3,8 +3,7 @@
 This learning path is intended to help you understand bit by bit - assuming you have some python skills and have played a bit with machine learning models in the past, I believe this is a gentle introduction into reinforcment learning. I tried to focus on simplicity, adding concepts step by step.
 
 
-
-# 0_setup
+# [0_setup](./0_setup)
 In my own beginning I started using jupyter notebook, but then switched to a spyder environment, as for me debugging was easier - especially for working through the [stable-baselines3-zoo codebase](https://github.com/DLR-RM/stable-baselines3).
 
 
