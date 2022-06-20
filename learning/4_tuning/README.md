@@ -1,4 +1,8 @@
 
+conda install optuna
+
+
+
 # using zoo
 
 

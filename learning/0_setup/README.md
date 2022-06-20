@@ -45,7 +45,7 @@ conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch -y
 
 In order to reproduce you need to
 ```
-pip install gym pygame gym[atari] ale-py==0.7.4 stable-baselines3==1.5.0 stable-baselines3[extra] box3d
+pip install gym pygame gym[atari] ale-py==0.7.4 stable-baselines3==1.5.0 stable-baselines3[extra] box2d
 ```
 
 A [gym environment](https://github.com/openai/gym) provides us with a framework to bring games ( environments) together with with models, train them and interact with it. 

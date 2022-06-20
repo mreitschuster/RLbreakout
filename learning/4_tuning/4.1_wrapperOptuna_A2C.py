@@ -80,13 +80,13 @@ def create_objective(N_EVAL_EPISODES,
     def objective(trial):
         model_params={
             'policy':               'CnnPolicy',
-            'n_epochs':              4,
-            'batch_size':            256,
+            #'n_epochs':              4,
+            #'batch_size':            256,
             'vf_coef':               0.5,  # trial.suggest_uniform('vf_coef',   0.1, 0.9),
             'ent_coef':              0.01, # trial.suggest_loguniform('ent_coef', 0.0001, 0.9),
             'n_steps':               2*64, # trial.suggest_int('n_steps_multiple', 1, 10)*64,
-            'learning_rate':         2.5e-4, #trial.suggest_loguniform('learning_rate_initial', 1e-6, 1e-3),
-            'clip_range':            0.1, # trial.suggest_loguniform('clip_range_initial',    1e-4, 0.9 ),
+            'learning_rate':         trial.suggest_loguniform('learning_rate_initial', 1e-6, 1e-3),
+            #'clip_range':            0.1, # trial.suggest_loguniform('clip_range_initial',    1e-4, 0.9 ),
             #'gamma':                 trial.suggest_loguniform('gamma', 0.8, 0.9999),
             #'gae_lambda':            trial.suggest_uniform('gae_lambda', 0.8, 0.99)
         }
