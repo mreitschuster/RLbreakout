@@ -11,10 +11,6 @@ log_folder=os.path.expanduser('~/models/breakout-v4/log/'+name_model+'/')
 model_folder=os.path.expanduser('~/models/breakout-v4/model/'+name_model+'/')
 tensorboard_folder=os.path.expanduser('~/models/breakout-v4/tb_log/'+name_model+'/')
 
-# env
-#n_envs                = 8
-
-
 # eval
 seed=123
 
@@ -167,23 +163,23 @@ instance_objective1 = create_objective(N_EVAL_EPISODES   = 100,
                                        verbose=1)
 if not os.path.exists(model_folder):
     os.mkdir(model_folder)
-study1 = optuna.create_study(direction='maximize', storage='sqlite:///'+model_folder+'4.0_wrapperOptuna_study1.db', study_name='study1', load_if_exists=True)
+study1 = optuna.create_study(direction='maximize', storage='sqlite:///'+model_folder+name_model+'_study1.db', study_name='study1', load_if_exists=True)
 
 # adding known working parameters and expected well-working params
 
-study1.enqueue_trial({'env_id': 'Breakout-v4','frame_stack': 3,'MaxAndSkipEnv_skip': 0, 'n_envs': 8}) 
-study1.enqueue_trial({'env_id': 'BreakoutNoFrameskip-v4','frame_stack': 3,'MaxAndSkipEnv_skip': 4, 'n_envs': 8}) 
-study1.enqueue_trial({'env_id': 'BreakoutNoFrameskip-v4','frame_stack': 3,'MaxAndSkipEnv_skip': 3, 'n_envs': 8}) 
-study1.enqueue_trial({'env_id': 'BreakoutNoFrameskip-v4','frame_stack': 3,'MaxAndSkipEnv_skip': 5, 'n_envs': 8}) 
-study1.enqueue_trial({'env_id': 'Breakout-v4','frame_stack': 8,'MaxAndSkipEnv_skip': 0, 'n_envs': 7}) 
-study1.enqueue_trial({'env_id': 'ALE/Breakout-v5','frame_stack': 2,'MaxAndSkipEnv_skip': 0, 'n_envs': 1}) 
+#study1.enqueue_trial({'env_id': 'Breakout-v4','frame_stack': 3,'MaxAndSkipEnv_skip': 0, 'n_envs': 8}) 
+#study1.enqueue_trial({'env_id': 'BreakoutNoFrameskip-v4','frame_stack': 3,'MaxAndSkipEnv_skip': 4, 'n_envs': 8}) 
+#study1.enqueue_trial({'env_id': 'BreakoutNoFrameskip-v4','frame_stack': 3,'MaxAndSkipEnv_skip': 3, 'n_envs': 8}) 
+#study1.enqueue_trial({'env_id': 'BreakoutNoFrameskip-v4','frame_stack': 3,'MaxAndSkipEnv_skip': 5, 'n_envs': 8}) 
+#study1.enqueue_trial({'env_id': 'Breakout-v4','frame_stack': 8,'MaxAndSkipEnv_skip': 0, 'n_envs': 7}) 
+#study1.enqueue_trial({'env_id': 'ALE/Breakout-v5','frame_stack': 2,'MaxAndSkipEnv_skip': 0, 'n_envs': 1}) 
 
 
 
 import time
 time.sleep(3) # otherwise console outputs get mixed up
 print('starting 1st optimization', flush=True)
-study1.optimize(instance_objective1, timeout=60*60*7)
+study1.optimize(instance_objective1, timeout=60*60*10)
 
 #%%
 optuna.importance.get_param_importances(study1)
@@ -221,7 +217,7 @@ instance_objective2 = create_objective(N_EVAL_EPISODES   = 20,
                                        study_name="study2",
                                        verbose=1)
 
-study2 = optuna.create_study(direction='maximize', storage='sqlite:///'+model_folder+'4.0_wrapperOptuna_study2.db', study_name='study2', load_if_exists=True)
+study2 = optuna.create_study(direction='maximize', storage='sqlite:///'+model_folder+name_model+'_study2.db', study_name='study2', load_if_exists=True)
 for i in range(0,5):
     study2.enqueue_trial(score_list1.iloc[i,:].params)
     

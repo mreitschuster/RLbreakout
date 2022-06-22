@@ -3,47 +3,6 @@
 """
 @author: mreitschuster
 """
-seed=124
-
-
-flag_col     = 'mono_1dim'        # '3col', 'grey_3dim', 'grey_1dim',  'mono_3dim', 'mono_1dim'
-flag_dim     = 'trim'        # 'blacken', 'whiten', 'keep', 'trim'
-flag_predict = 'predict'   # 'nopredict' , 'predict' , 'predict_counters'
-flag_EpisodicLifeEnv = True
-flag_FireResetEnv = False
-frame_stack = 3
-MaxAndSkipEnv_skip = 0
-name_folder='9.4_aimbot_training_fix_seed'
-name_model=name_folder + '_envseed_notfixed'
-
-
-import os
-tensorboard_folder=os.path.expanduser('~/models/breakout-v4/tb_log/'+name_folder+'/')
-model_folder=os.path.expanduser('~/models/breakout-v4/model/'+name_folder+'/'+name_model+'/')
-image_folder=os.path.expanduser('~/models/breakout-v4/image/'+name_folder+'/'+name_model+'/')
-
-
-# env
-env_id                = 'Breakout-v4'
-n_envs                = 8
-
-
-# model
-algo                  = 'ppo'
-policy                = 'CnnPolicy'
-n_steps               = 128
-n_epochs              = 4
-batch_size            = 256
-n_timesteps           = 1e7
-learning_rate_initial = 2.5e-4
-clip_range_initial    = 0.1
-vf_coef               = 0.5
-ent_coef              = 0.01
-
-# eval
-n_eval_episodes=5
-n_eval_envs=1
-eval_freq=25000
 
 
 #%% new observation wrapper
@@ -261,7 +220,6 @@ from stable_baselines3.common.vec_env import VecFrameStack
 from stable_baselines3.common.vec_env import VecTransposeImage
 from stable_baselines3.common.atari_wrappers import AtariWrapper,ClipRewardEnv,EpisodicLifeEnv,MaxAndSkipEnv, FireResetEnv
 
-
 def wrapper_class_generator(
                   flag_col, 
                   flag_dim, 
@@ -275,6 +233,8 @@ def wrapper_class_generator(
     
         if flag_EpisodicLifeEnv:
             env = EpisodicLifeEnv(env)
+        if flag_FireResetEnv:
+            env = FireResetEnv(env)
         if MaxAndSkipEnv_skip>0:
             env=MaxAndSkipEnv(env, skip=MaxAndSkipEnv_skip)
         # think about the order - which wrapper goes when
@@ -296,7 +256,7 @@ def create_env(env_id,
     
     new_env=make_vec_env(env_id        = env_id, 
                          n_envs        = n_envs, 
-                      #   seed          = seed,
+                         seed          = seed,
                          wrapper_class = wrapper_class,   # self.env_wrapper is function get_wrapper_class.<locals>.wrap_env  see line 104 in utils.py
                          vec_env_cls   = DummyVecEnv)    # self.vec_env_class is DummyVecEnv
     
@@ -304,73 +264,3 @@ def create_env(env_id,
     new_env = VecTransposeImage(new_env)           # line 578 in exp_manager.py
     return new_env
     
-#%%
-
-instance_wrapper_class=wrapper_class_generator(flag_col    = flag_col,
-                                               flag_dim    = flag_dim,
-                                               flag_predict = flag_predict,
-                                               flag_EpisodicLifeEnv = flag_EpisodicLifeEnv,
-                                               flag_FireResetEnv = flag_FireResetEnv,
-                                               MaxAndSkipEnv_skip = MaxAndSkipEnv_skip)
-
-
-train_env = create_env(env_id=env_id, n_envs=n_envs, seed=seed, frame_stack=frame_stack, 
-                       wrapper_class=instance_wrapper_class)
-
-eval_env = create_env(env_id=env_id, n_envs=n_eval_envs, seed=seed, frame_stack=frame_stack, 
-                       wrapper_class=instance_wrapper_class)
-
-#%%
-from stable_baselines3.common.callbacks import EvalCallback
-
-eval_callback = EvalCallback(eval_env,
-                             best_model_save_path=model_folder,
-                             n_eval_episodes=n_eval_episodes,
-                           #  log_path=log_folder, 
-                             eval_freq=max(eval_freq // n_envs, 1),
-                             deterministic=False, 
-                             render=False) # see exp_manager.py line 448
-
-#%%
-# create learning rate and clip rate functions
-# see _preprocess_hyperparams() line 168 in exp_manager.py
-# which uses _preprocess_schedules() line 286 in exp_manager.py
-# which uses linear_schedule() line 256 in utils.py
-from typing import  Callable, Union
-
-def linear_schedule(initial_value: Union[float, str]) -> Callable[[float], float]:
-    if isinstance(initial_value, str):
-        initial_value = float(initial_value)
-
-    def func(progress_remaining: float) -> float:
-        return progress_remaining * initial_value
-
-    return func
-
-learning_rate_shedule = linear_schedule(learning_rate_initial)
-clip_range_shedule    = linear_schedule(clip_range_initial)
-
-#%%
-
-from stable_baselines3 import PPO
-
-model = PPO(policy, 
-            train_env, 
-            n_steps        = n_steps,
-            n_epochs       = n_epochs,
-            batch_size     = batch_size,
-            learning_rate  = learning_rate_shedule,
-            clip_range     = clip_range_shedule,
-            vf_coef        = vf_coef,
-            ent_coef       = ent_coef,            
-            verbose        = 1, 
-            seed            = seed,
-            tensorboard_log = tensorboard_folder) # exp_manager.py line 185
-
-#%%
-model.learn(total_timesteps = n_timesteps,
-            callback        = eval_callback, 
-            tb_log_name     = name_model)
-
-#%%
-model.save(model_folder+name_model+'.zip')

@@ -13,7 +13,6 @@ This is the very basic setup - getting a gym environment to run and train our ve
 # [2_baselines](./2_baselines)
 We understand how [stable-baselines3-zoo](https://stable-baselines3.readthedocs.io/en/master/guide/rl_zoo.html) trains a model for Breakout and reproduce its results with simplified code (for the specific case of PPO on Atari breakout). These are the steps taken:
 - use multiple environments in parallel
-<<<<<<< HEAD
 - add an evalution callback to evaluate our model in a different environment
 - add a custom callback to write custom metrics into tensorboard
 - run the zoo code
@@ -40,12 +39,15 @@ Consider watching the [video highlighting the main steps and thoughts](https://y
 ![4 instances of Breakout being played into high scores](./video/3.3_aimbot_training_mono_1dim_trim_predict_3fs_0es_seed124_1e7.gif)
 
 # [4_tuning](./4_tuning)
-This is a work in progress.
-We explore ways to use [Optuna](https://optuna.readthedocs.io/en/stable/) to tune hyperparameters.
+We explore ways to use [Optuna](https://optuna.readthedocs.io/en/stable/) to tune hyperparameters, looking at the interaction of the optuna objective, trial, sampler and pruner.
+
+Both instances are played by the same model - in different environments. The model was trained in BreakoutNoFrameskip-v4. The left is from it playing in the same. On the right we see it performing in Breakout-v5, which has some stochastic elements. The model has memorized the exact steps to get a great score. But as soon as the environment behaves slightly differently it cannot cope.
+![AI performing badly](./video/4.4.0_wrapper_optuna_PPO_noFrameskipV4.gif)
+![AI performing badly](./video/4.0_wrapper_optuna_PPO_v5.gif)
+
 
 # TODO
 
-explore hyperparameter tuning
 resampling late-game states
 noise for exploration
 other models
