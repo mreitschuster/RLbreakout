@@ -42,8 +42,8 @@ Consider watching the [video highlighting the main steps and thoughts](https://y
 We explore ways to use [Optuna](https://optuna.readthedocs.io/en/stable/) to tune hyperparameters, looking at the interaction of the optuna objective, trial, sampler and pruner.
 
 Both instances are played by the same model - in different environments. The model was trained in BreakoutNoFrameskip-v4. The left is from it playing in the same. On the right we see it performing in Breakout-v5, which has some stochastic elements. The model has memorized the exact steps to get a great score. But as soon as the environment behaves slightly differently it cannot cope.
-![AI performing badly](./video/4.4.0_wrapper_optuna_PPO_noFrameskipV4.gif)
-![AI performing badly](./video/4.0_wrapper_optuna_PPO_v5.gif)
+
+<img src="../video/4.0_wrapper_optuna_PPO_noFrameskipV4.gif)" width="400" />&nbsp;&nbsp;&nbsp;<img src="../video/4.0_wrapper_optuna_PPO_v5.gif" width="400" />
 
 
 # TODO
