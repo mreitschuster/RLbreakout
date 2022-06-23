@@ -58,3 +58,5 @@ We also explore the option of encoding individual variables into the picture as 
 - padel's column
 This did not enchance the model's performance and I suspect even thought providing this data to the model make sense, more time is needed to properly explore how to combine spatial with non-spatial information.
 
+# Remarks
+I recommend to have a look at [Nicholas Renotte's Video Build a Street Fighter AI Model with Python](https://www.youtube.com/watch?v=rzbFhu6So5U) with its [code hosted also on github](https://github.com/nicknochnack/StreetFighterRL/blob/main/StreetFighter-Tutorial.ipynb). I find noteworthy, that he defines observation space as the difference in pixels from one frame to another.
