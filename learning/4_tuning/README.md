@@ -46,7 +46,7 @@ To dive a bit deeper, especially understanding the drawbacks of each of these me
 
 Be mindful what scores you are shown as reference. [SB3 zoo's benchmarks](https://github.com/DLR-RM/rl-baselines3-zoo/blob/master/benchmark.md) show scores of 398+-33 for Breakout with PPO after 1e7 steps. And also [Vincent Mueller's code](https://medium.com/towards-data-science/training-rl-agents-in-stable-baselines3-is-easy-9d01be04c9db) achieves extremly high scores for such straightforward code. Both are not using Framskip or Sticky/Random Buttons.
 
-I reran Vincent's code to train the model (1e7 steps on 'BreakoutNoFrameskip-v4') and then let it play on 'Breakout-v5'
+I reran Vincent's code to train the model - A2C model on AtariWrapper, 1e7 steps on 'BreakoutNoFrameskip-v4'.
 
 ![AI playing 9 games with high score, but out of sync](./video/9.3_VM_A2C_NoFrameskip-v4_9env.gif)
 
