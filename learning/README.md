@@ -41,7 +41,7 @@ Consider watching the [video highlighting the main steps and thoughts](https://y
 # [4_tuning](./4_tuning)
 We explore ways to use [Optuna](https://optuna.readthedocs.io/en/stable/) to tune hyperparameters, looking at the interaction of the optuna objective, trial, sampler and pruner.
 
-Both instances are played by the same model - in different environments. The model was trained in BreakoutNoFrameskip-v4. The left is from it playing in the same. On the right we see it performing in Breakout-v5, which has some stochastic elements. The model has memorized the exact steps to get a great score. But as soon as the environment behaves slightly differently it cannot cope.
+Both instances are played by the same model - in different environments. The model was trained in BreakoutNoFrameskip-v4. The first gif is from it playing in the same. In the second gif we see it performing in Breakout-v5, which has some stochastic elements. The model has memorized the exact steps to get a great score. But as soon as the environment behaves slightly differently it cannot cope.
 
 ![AI playing almost perfectly](./video/4.0_wrapper_optuna_PPO_noFrameskipV4.gif)
 
@@ -57,3 +57,4 @@ on policy/off policy
 
 # Remarks
 I recommend to have a look at [Nicholas Renotte's Video Build a Street Fighter AI Model with Python](https://www.youtube.com/watch?v=rzbFhu6So5U) with its [code hosted also on github](https://github.com/nicknochnack/StreetFighterRL/blob/main/StreetFighter-Tutorial.ipynb). I find noteworthy, that he defines observation space as the difference in pixels from one frame to another.
+
