@@ -3,7 +3,7 @@
 With some tuning of the environment variables we now achieve scores well above 400. The price is that the model doesn't generalize any more and cannot cope with slight stochastic elements in the environment.
 
 **Train RL model to play Breakout - Howto 4/5** Video link - click on the picture.
-[![RL Breakout 4/5](../pictures/thumbnails/4_tuning.png)](https://youtu.be/vdtOBbPTGwk)
+[![RL Breakout 4/5](../pictures/thumbnails/4_tuning.png)](https://youtu.be/gzjdqqmWqNI)
 
 
 # Setup
@@ -55,6 +55,3 @@ On the deterministic environment 'NoFrameskip-v4' it is not in sync (even if we 
 ![AI playing 9 almost perfectly similar games badly](../video/9.3_VM_A2C_v5_9env.gif)
 
 But applying the model to v5, we see it performing poorly on the stochastic environment. My guess is that the model just memorizes 30 different sequences.
-
-4.1
-pip install sb3-contrib
