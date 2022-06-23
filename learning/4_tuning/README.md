@@ -22,13 +22,13 @@ This is a script that collects a few lines that allow us to explore the feature 
 
 # deterministic environment & stochasticity injection
 
-![AI playing 9 almost perfectly similar games](./video/4.0_wrapper_optuna_PPO_v4noFramestack_9env_overfitted.gif)
+![AI playing 9 almost perfectly similar games](../video/4.0_wrapper_optuna_PPO_v4noFramestack_9env_overfitted.gif)
 
 This is a impressive gameplay we get out of the tuned model. But it all looks so similar. The reason is that the tuning algo chose 'BreakoutNoFrameskip-v4' as environment, which has no stachastic elements. The game always behaves exactly the same way, given the same previous state and model action. The only reason it tends to get out of sync, is because we added `deterministic=False` to the model prediction function, so sometimes the model might chose a different action.
 
 ## Not overfitting, but memorizing sequences
 
-![AI playing 9 almost perfectly similar games badly](./video/4.0_wrapper_optuna_PPO v5 9envs.gif)
+![AI playing 9 almost perfectly similar games badly](../video/4.0_wrapper_optuna_PPO v5 9envs.gif)
 
 And this is the same model - the ones that performed way beyond 400 above - playing 'Breakout-v5', an environment with sticky buttons. As soon as something not per playbook happens it fails. If we want to avoid this we need to train on an environment with some randomness.
 
@@ -48,11 +48,11 @@ Be mindful what scores you are shown as reference. [SB3 zoo's benchmarks](https:
 
 I reran Vincent's code to train the model - A2C model on AtariWrapper, 1e7 steps on 'BreakoutNoFrameskip-v4'.
 
-![AI playing 9 games with high score, but out of sync](./video/9.3_VM_A2C_NoFrameskip-v4_9env.gif)
+![AI playing 9 games with high score, but out of sync](../video/9.3_VM_A2C_NoFrameskip-v4_9env.gif)
 
 On the determinstic environment 'NoFrameskip-v4' it is not in sync (even if we turn of deterministic mofel predictions). The reason is in the [Atarwrapper's Noop](https://stable-baselines3.readthedocs.io/en/master/_modules/stable_baselines3/common/atari_wrappers.html#NoopResetEnv)  - it adds some randomness by adding a random number of noops in the beginning of the game (up to 30), so the model cannot memorize a perfect sequences.
 
-![AI playing 9 almost perfectly similar games badly](./video/9.3_VM_A2C_v5_9env.gif)
+![AI playing 9 almost perfectly similar games badly](../video/9.3_VM_A2C_v5_9env.gif)
 
 But applying the model to v5, we see it performing poorly on the stochastic environment. My guess is that the model just memorizes 30 different sequences.
 
