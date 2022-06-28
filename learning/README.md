@@ -54,5 +54,20 @@ noise for exploration
 other models
 on policy/off policy
 
+# Important Resources
+### Environment
+[Open AI Gym Docu](https://www.gymlibrary.ml/)
+[Open AI Gym Github](https://github.com/openai/gym)
+[Ale-py Github](https://github.com/mgbellemare/Arcade-Learning-Environment) - framework to use Stella in python
+[Stella](https://stella-emu.github.io/) - the Atari emulator
+### Models and Wrappers
+[Stable Baselines3 Docu](https://stable-baselines3.readthedocs.io/en/master/)
+[Stable Baselines3 Github](https://github.com/DLR-RM/stable-baselines3)
+### Hyperparameter Tuning
+[Optuna Docu](https://optuna.readthedocs.io/en/stable/)
+[Optuna Github](https://github.com/optuna/optuna)
+
+### Information
+[Machato et al 2018 on Arcade Learning Environment](https://arxiv.org/abs/1709.06009v2) - Information about the environments, e.g. number of modes, difficulty
 
 
