@@ -94,8 +94,7 @@ env_params={
        
           
 # eval env will be without resampling the endgame and the episodic life
-instance_wrapper_class_train = wrapper_class_generator(flag_customObswrapper= True,
-                                                               flag_col             = env_params['flag_col'],
+instance_wrapper_class_train = wrapper_class_generator(flag_col             = env_params['flag_col'],
                                                                flag_dim             = env_params['flag_dim'],
                                                                flag_predict         = env_params['flag_predict'],
                                                                flag_EpisodicLifeEnv = True,
@@ -103,8 +102,7 @@ instance_wrapper_class_train = wrapper_class_generator(flag_customObswrapper= Tr
                                                                MaxAndSkipEnv_skip   = env_params['MaxAndSkipEnv_skip']
                                                                )
         
-instance_wrapper_class_eval = wrapper_class_generator(flag_customObswrapper = True,
-                                                               flag_col             = env_params['flag_col'],
+instance_wrapper_class_eval = wrapper_class_generator(flag_col             = env_params['flag_col'],
                                                                flag_dim             = env_params['flag_dim'],
                                                                flag_predict         = env_params['flag_predict'],
                                                                flag_EpisodicLifeEnv = False,
