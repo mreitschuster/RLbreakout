@@ -10,8 +10,8 @@ Pnew=0.9
 n_envs=5
 
 
-name_model='5.4_v5_scratch_1e8_endGame_wrap_Pnew'+str(Pnew)+'_nrrep'+str(rep)+'_checkdist'+str(dist)+'_nenv'+ str(n_envs)+ '_extraMonitor'
-name_folder='5.4_failed_endstates_single'
+name_model='5.5_nenv'+ str(n_envs)
+name_folder='5.5_obswrap_expshedule_longtrain'
 
 
 import os
@@ -19,7 +19,6 @@ log_folder         = os.path.expanduser('~/models/breakout-v4/log/'+name_folder+
 model_folder       = os.path.expanduser('~/models/breakout-v4/model/'+name_folder+'/')
 tensorboard_folder = os.path.expanduser('~/models/breakout-v4/tb_log/'+name_folder+'/')
 tb_log_name        = name_model
-
 
 
 TRAINING_STEPS=1e8
@@ -37,10 +36,7 @@ pretrained_model=None
 #pretrained_model=PPO.load(os.path.expanduser('~/models/breakout-v4/model/5.4_failed_endstates_single/best_model_22mSteps_brokenFailedEndstateRepeat'))
 
 #%%
-from CustomWrapper_failed_endstates import wrapper_class_generator, create_env, ResampleStatesLogger
-
-
-inst_ResampleStatesLogger = ResampleStatesLogger()
+from BreakoutWrapper import wrapper_class_generator, create_env
 
 #%%
 from typing import Callable, Union
@@ -74,11 +70,11 @@ model_params={
             'batch_size':            256,
             'vf_coef':               0.5,  # trial.suggest_uniform('vf_coef',   0.1, 0.9),
             'ent_coef':              0.01, # trial.suggest_loguniform('ent_coef', 0.0001, 0.9),
-            'n_steps':               128, #4096, #2*64, # trial.suggest_int('n_steps_multiple', 1, 10)*64,
+            'n_steps':               1024, #4096, #2*64, # trial.suggest_int('n_steps_multiple', 1, 10)*64,
             
             # same slope through target = start/e  
             # but for different number of training steps 
-            'learning_rate':         exponential_schedule(2.5e-4 , TRAINING_STEPS, 2.5e-4/math.exp(10e8/10e7)),#linear_schedule(2.5e-4),
+            'learning_rate':         exponential_schedule(5e-4 , TRAINING_STEPS, 5e-4/math.exp(10e8/10e7)),#linear_schedule(2.5e-4),
             'clip_range':            exponential_schedule(.1 , TRAINING_STEPS, .1/math.exp(10e8/10e7)),#linear_schedule(.1),
             #'learning_rate':         linear_schedule(2.5e-4),
             #'clip_range':            linear_schedule(.1),
@@ -93,12 +89,7 @@ env_params={
             'frame_stack'        : 3, #trial.suggest_int('frame_stack', 1, 10),
             'MaxAndSkipEnv_skip' : 0, #trial.suggest_int('MaxAndSkipEnv_skip', 0, 4),
             'flag_FireResetEnv'  : True,
-            'n_envs'             : n_envs, #trial.suggest_int('n_envs', 1,16),
-            'checkDist'          : dist, #trial.suggest_int('checkDist', 500,5_000),
-            'max_nr_states'      : 100, #trial.suggest_int('max_nr_states', 10,100)
-            'prob_start_new'     : Pnew,
-            'nr_replays_on_death'  : rep,
-            'nr_replays_on_random' : 1
+            'n_envs'             : n_envs #trial.suggest_int('n_envs', 1,16)
             }
        
           
@@ -109,13 +100,7 @@ instance_wrapper_class_train = wrapper_class_generator(flag_customObswrapper= Tr
                                                                flag_predict         = env_params['flag_predict'],
                                                                flag_EpisodicLifeEnv = True,
                                                                flag_FireResetEnv    = env_params['flag_FireResetEnv'],
-                                                               MaxAndSkipEnv_skip   = env_params['MaxAndSkipEnv_skip'],
-                                                               flag_customEndgameResampler=True,
-                                                               checkDist            = env_params['checkDist'],
-                                                               max_nr_states        = env_params['max_nr_states'],
-                                                               prob_start_new       = env_params['prob_start_new'],
-                                                               nr_replays_on_death  = env_params['nr_replays_on_death'],
-                                                               nr_replays_on_random = env_params['nr_replays_on_random']
+                                                               MaxAndSkipEnv_skip   = env_params['MaxAndSkipEnv_skip']
                                                                )
         
 instance_wrapper_class_eval = wrapper_class_generator(flag_customObswrapper = True,
@@ -124,13 +109,7 @@ instance_wrapper_class_eval = wrapper_class_generator(flag_customObswrapper = Tr
                                                                flag_predict         = env_params['flag_predict'],
                                                                flag_EpisodicLifeEnv = False,
                                                                flag_FireResetEnv    = env_params['flag_FireResetEnv'],
-                                                               MaxAndSkipEnv_skip   = env_params['MaxAndSkipEnv_skip'],
-                                                               flag_customEndgameResampler=False,
-                                                               checkDist            = env_params['checkDist'],
-                                                               max_nr_states        = env_params['max_nr_states'],
-                                                               prob_start_new       = env_params['prob_start_new'],
-                                                               nr_replays_on_death  = env_params['nr_replays_on_death'],
-                                                               nr_replays_on_random = env_params['nr_replays_on_random']
+                                                               MaxAndSkipEnv_skip   = env_params['MaxAndSkipEnv_skip']
                                                                )
             
 train_env = create_env(env_id=env_params['env_id'], seed=None, wrapper_class=instance_wrapper_class_train, n_envs=env_params['n_envs'], frame_stack=env_params['frame_stack'])
@@ -159,7 +138,7 @@ if pretrained_model is not None:
                 
 model.learn(total_timesteps = TRAINING_STEPS,
             tb_log_name     = tb_log_name,
-            callback        = [eval_callback,inst_ResampleStatesLogger], 
+            callback        = eval_callback, 
             reset_num_timesteps = False)
             
 model.save(os.path.join(model_folder,name_model))

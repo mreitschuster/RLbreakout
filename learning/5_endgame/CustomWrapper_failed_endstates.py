@@ -220,7 +220,7 @@ flag_debug=False
 flag_viz  =False
 
 class ResampleStatesWrapper(gym.Wrapper):
-    def __init__(self, env, checkDist = 500, max_nr_states=100, prob_start_new=0.3, nr_replays=5):
+    def __init__(self, env, checkDist = 500, max_nr_states=100, prob_start_new=0.3, nr_replays_on_death=5, nr_replays_on_random=1):
         super().__init__(env)
 
         
@@ -247,13 +247,13 @@ class ResampleStatesWrapper(gym.Wrapper):
         self.nextCheckStep = checkDist
         self.lastEpisode_last_state = None          
         self.lastEpisode_second_last_state = None
-        self.lastEpisode_save = True
-        
+
         # replay parameters
-        self.replay_failed = nr_replays # how often should we let the model replay failed states
+        self.nr_replays_on_death = nr_replays_on_death # how often should we let the model replay failed states
+        self.nr_replays_on_random = nr_replays_on_random 
         self.replay_index  = 0  # counter to count how often we played them. if 0 -> replays finished
         self.replay_state  = None # this is the state we are retrying in a replay 
-        self.replay_save   = False
+        self.replay_save   = False # should the current fresh episode be saved?
         
         # logger parameters
         self.replayed_on_death  = 0
@@ -261,119 +261,127 @@ class ResampleStatesWrapper(gym.Wrapper):
         self.replayed_randomly  = 0
         self.replayed_randomly_immediate_death  = 0
         self.fresh_games  = 0
-    
-    def stop_replay(self):
-        # we stop the replay, setting the index back and removing the state object
         
-        if self.replay_save:
-            if len(self.states)<self.max_nr_states:
-                self.states.append(self.replay_state)
-            else:
-                i =  random.randrange(0, self.max_nr_states)
-                self.states[i] = self.replay_state
-        
-        self.replay_index  = 0
-        self.replay_state  = None
-        self.replay_save   = False
-        
-    def start_new_state(self, **kwargs):
-        # start a new state
-        # either a completely fresh one or draw from self.states
-        
-        nr_states=len(self.states)
-        assert self.max_nr_states >= nr_states
-        
-        if (nr_states==0):
-            prob=1
-        else:
-            prob=self.prob_start_new + (1-self.prob_start_new)*(1-nr_states/self.max_nr_states)
-        
-        assert prob >=self.prob_start_new 
-        assert prob <=1
-        
-        start_new = (random.uniform(0,1)<prob)
-        
-        assert self.replay_index  == 0 # shouldnt be starting a new one during replay
-        
-        
-        
-        if (nr_states==0) or (start_new):
+        self.env_needed_resetting_before_stepping  = 0
             
-            obs = self.unwrapped.reset(**kwargs)
-            obs = self.env.reset(**kwargs)
-            
-            self.lastEpisode_save = True
-            self.replay_save  = True
-            if flag_debug: print("Playing a fresh new game")
-            self.fresh_games =self.fresh_games +1
-            
-        else:
-            self.lastEpisode_save = False
-            new_state=random.sample(self.states,1)[0]
-            self.replay_index = 1 # should be played only once and should not be able to spawn new saves
-            self.replay_save  = False
-            
-            if flag_debug: print("loading old gamestate:" + str(new_state))
-            self.env.reset(**kwargs) # to make sure total steps & other variables from the in between wrappers etc are reset
-            self.env.restore_state(new_state)   # self.env points to wrapped env
-            assert self.monitor_env.needs_reset==False
-            
-            obs, reward, done, info  = self.env.step(self.env.action_space.sample())     
-            
-            self.replayed_randomly =self.replayed_randomly +1
-            
-            #if done: 
-            #    self.stop_replay(save_replay_state_to_list=False)
-            if done==True:
-                # we have loaded a state that fails immediately
-                self.states.pop(self.states.index(new_state))
-                self.replay_index =0
-                self.replayed_randomly_immediate_death =self.replayed_randomly_immediate_death +1
-                obs=self.start_new_state(**kwargs)
-        
+    def reset_config_and_state_to_fresh_game(self, **kwargs):
+        if flag_debug: print("Playing a fresh game")
+        self.replay_save  = True
+        self.replay_index = 0
+        obs = self.unwrapped.reset(**kwargs)
+        obs = self.env.reset(**kwargs)
+        self.fresh_games =self.fresh_games +1 
         return obs
+       
+    def reset_config_to_new_random_replay(self, **kwargs):
+        assert len(self.states)>0
+        assert self.replay_index==0
+              
+        self.replay_state = random.sample(self.states,1)[0]
+        self.replay_index = self.nr_replays_on_random
+        self.replay_type  = "random"
+        self.replay_save  = False 
+        
+        if flag_debug: print(self.replay_type+ " replay Session configured. state: " + str(self.replay_state)+ " replays: " + str(self.replay_index))
+    
+    def reset_config_to_on_death_replay(self, **kwargs):
+        assert self.lastEpisode_second_last_state is not None
+        assert self.replay_index==0
+              
+        self.replay_state = self.lastEpisode_second_last_state
+        self.replay_index = self.nr_replays_on_death
+        self.replay_type  = "on_death"
+        self.replay_save  = False 
+        
+        if flag_debug: print(self.replay_type+ " replay Session configured. state: " + str(self.replay_state)+ " replays: " + str(self.replay_index))
+    
+    def reset_to_replay_state(self, **kwargs):
+        assert self.replay_state is not None
+        assert self.replay_index > 0
+        
+        self.replay_save      = False
+        new_state = self.replay_state
+        if flag_debug: print(self.replay_type + " replay. loading " + str(new_state) + " replay_index: " + str(self.replay_index))
+        self.env.reset(**kwargs) # to make sure total steps & other variables from the in between wrappers etc are reset
+        self.env.restore_state(new_state)   # self.env points to wrapped env
         
         
+        if self.monitor_env.needs_reset:
+            starting_env_success=False
+            
+        else:
+
+            obs, reward, done, info  = self.env.step(self.env.action_space.sample())     
+            if done: starting_env_success=False
+            else: starting_env_success = True
+                       
+            if flag_debug: print("save restored: " + str(self.replay_state))
+            if flag_viz and (self.replay_index==self.replay_failed): plt.imshow(obs)    
+            if flag_viz and (self.replay_index==self.replay_failed): plt.show()                
+            if flag_debug: print("reset function - resetting to replay with replay_index:" + str(self.replay_index))
+        
+        if starting_env_success:
+            if flag_debug: print("resetting succesfully initiated")
+            if self.replay_type == "random":
+                self.replayed_randomly=self.replayed_randomly+1
+            elif self.replay_type == "on_death":
+                self.replayed_on_death=self.replayed_on_death+1
+            else:
+                raise NameError("type not found: " + self.replay_type )
+                
+        else:
+            if flag_debug: print("resetting failed")
+            if self.replay_type == "random":
+                self.replayed_randomly_immediate_death=self.replayed_randomly_immediate_death+1
+            if self.replay_type == "death":
+                self.replayed_on_death_immediate_death=self.replayed_on_death_immediate_death+1
+                
+            self.states.pop(self.states.index(self.replay_state)) 
+            self.replay_state  = None
+            self.replay_index  = 0
+            self.replay_save   = False
+            obs = self.reset_config_and_state_to_fresh_game(**kwargs)
+
+        return obs
+    
     def reset(self, **kwargs):
         
         if self.replay_index == 0: # when we are free to play a new game
-            obs = self.start_new_state(**kwargs)
+            # start a new state
+            # either a completely fresh one or draw from self.states
             
+            nr_states=len(self.states)
+            assert self.max_nr_states >= nr_states
+            
+            if (nr_states==0):
+                prob=1
+            else:
+                prob=self.prob_start_new + (1-self.prob_start_new)*(1-nr_states/self.max_nr_states)
+            
+            assert prob >=self.prob_start_new 
+            assert prob <=1
+            
+            start_new = (random.uniform(0,1)<prob)
+            
+            assert self.replay_index  == 0 # shouldnt be starting a new one during replay
+            
+            if (nr_states==0) or (start_new):
+                obs=self.reset_config_and_state_to_fresh_game(**kwargs)
+
+            else:
+                self.reset_config_to_new_random_replay(**kwargs)
+                obs=self.reset_to_replay_state(**kwargs)
+           
             
         else: # when we have to replay a last failed episode
-            assert self.replay_state is not None, "replay_state is None, but that should be impossible with replay_index!=0"
-            # this code should only be executed if we replay on death (not on replay randomly)
-            assert self.replay_save == True
+            obs = self.reset_to_replay_state(**kwargs)
+            
+        #assert (not self.env.needs_reset), "after reset the env should not need resetting"
+        if self.monitor_env.needs_reset:
+            self.env_needed_resetting_before_stepping=self.env_needed_resetting_before_stepping+1
+            self.reset_config_and_state_to_fresh_game(**kwargs)
             
             
-            self.env.reset(**kwargs) # to make sure total steps & other variables from the in between wrappers etc are reset
-            #self.unwrapped.reset(**kwargs)
-            self.env.restore_state(self.replay_state) 
-            
-            starting_env_success=True
-            
-            if self.monitor_env.needs_reset:
-                starting_env_success=False
-            else:
-                self.replayed_on_death =self.replayed_on_death +1
-
-                obs, reward, done, info = self.env.step(self.env.action_space.sample())  
-                if done: starting_env_success=False
- 
-                if flag_debug: print("save restored: " + str(self.replay_state))
-                if flag_viz and (self.replay_index==self.replay_failed): plt.imshow(obs)    
-                if flag_viz and (self.replay_index==self.replay_failed): plt.show()                
-                if flag_debug: print("reset function - resetting to replay with replay_index:" + str(self.replay_index))
-            
-            if starting_env_success==False:
-                # this means the replay_state is not good - it is possible to immediately fail
-                self.replayed_on_death_immediate_death=self.replayed_on_death_immediate_death+1
-                self.replay_save   = False
-                self.stop_replay() 
-                obs = self.start_new_state(**kwargs)
-            
-        assert (not self.env.needs_reset), "after reset the env should not need resetting"
-        
         return obs
 
     
@@ -383,7 +391,7 @@ class ResampleStatesWrapper(gym.Wrapper):
             
         # Create continous savegames
         # save the last episode in order to have a good start point available
-        if self.lastEpisode_save:
+        if self.replay_save:
             if self.n_calls >= self.nextCheckStep:
                 if (self.lastEpisode_last_state is not None) and (not self.env.needs_reset):
                     self.lastEpisode_second_last_state = self.lastEpisode_last_state
@@ -393,8 +401,14 @@ class ResampleStatesWrapper(gym.Wrapper):
                 self.nextCheckStep = self.nextCheckStep + self.checkDist
                 
 
+        if self.monitor_env.needs_reset:
+            self.env_needed_resetting_before_stepping=self.env_needed_resetting_before_stepping+1
+            self.reset_config_and_state_to_fresh_game()
+            
         # execute the next action
         obs, reward, done, info = self.env.step(action)
+        
+        
         
         # save last state to main 
         if done: 
@@ -408,32 +422,36 @@ class ResampleStatesWrapper(gym.Wrapper):
                 
                 # a replay has ended an we need to decrement the index
                 self.replay_index = self.replay_index -1
-                if self.replay_index ==0: self.stop_replay() 
+                if self.replay_index ==0: 
+                    self.replay_state=0
+                    
                 # in case the replays were succesfull we can confidently reuse this state for training.
                 # what might prohibit this is when the state is such that we cannot get a decent start
                 # and immediately fail.
                     
             else:
-                if (self.lastEpisode_save == True) and (self.lastEpisode_second_last_state is None):  
+                if (self.replay_save == True) and (self.lastEpisode_second_last_state is None):  
                 # the model fails very early, before states have been saved
                     if flag_debug: print("failed before having a valid save")            
-                elif (self.lastEpisode_save == False):
+                elif (self.replay_save == False):
                     if flag_debug: print("this run was not intended to give a save")  
                 else:
- 
+                    if len(self.states)<self.max_nr_states:
+                        self.states.append(self.lastEpisode_second_last_state)
+                    else:
+                        i =  random.randrange(0, self.max_nr_states)
+                        self.states[i] = self.lastEpisode_second_last_state
+                    
                 # we are not replaying and we have a savegame
-                    if flag_debug: print("Episode ended & second last state saved & now starting replays")
-                    #if flag_debug: print("Orig Gameplay return: "+ str(self.env.episode_returns[-1]) + " length: " + str(self.env.episode_lengths[-1]))
+                    if flag_debug: print("fresh episode ended & second last state saved & now starting replays")
                     if flag_debug and (len(self.monitor_env.episode_returns)>0): print("Orig Gameplay return: "+ str(self.monitor_env.episode_returns[-1]) + " length: " + str(self.monitor_env.episode_lengths[-1]))
                     if flag_viz: plt.imshow(obs)
                     if flag_viz: plt.show()
-                    self.replay_state = self.lastEpisode_second_last_state
-                    self.replay_index = self.replay_failed
-                    self.replay_save  = True
-                        
+                    
+                    self.reset_config_to_on_death_replay()
+                    
                     self.lastEpisode_second_last_state = None
                     self.lastEpisode_last_state        = None
-                    self.lastEpisode_save              = False # no need to record now, as we replay the just created state
             
             _=1
         
@@ -459,6 +477,7 @@ class ResampleStatesLogger(BaseCallback):
         replayed_on_death=[]
         replayed_randomly_immediate_death=[]
         replayed_on_death_immediate_death=[]
+        env_needed_resetting_before_stepping=[]
         
         for i in range(nr_env):
             nr_states.append(len(self.training_env.venv.venv.envs[i].env.states))
@@ -467,21 +486,24 @@ class ResampleStatesLogger(BaseCallback):
             replayed_on_death.append(self.training_env.venv.venv.envs[i].env.replayed_on_death)
             replayed_randomly_immediate_death.append(self.training_env.venv.venv.envs[i].env.replayed_randomly_immediate_death)
             replayed_on_death_immediate_death.append(self.training_env.venv.venv.envs[i].env.replayed_on_death_immediate_death)
+            env_needed_resetting_before_stepping.append(self.training_env.venv.venv.envs[i].env.env_needed_resetting_before_stepping)
             
             
         nr_states_mean  = np.mean(nr_states)  # average over all environments
         fresh_games_mean  = np.mean(fresh_games) 
         replayed_randomly_mean  = np.mean(replayed_randomly) 
         replayed_on_death_mean  = np.mean(replayed_on_death) 
-        replayed_randomly_immediate_death_mean  = np.mean(replayed_randomly_immediate_death) 
-        replayed_on_death_immediate_death_mean  = np.mean(replayed_on_death_immediate_death) 
+        replayed_randomly_immediate_death_sum  = np.sum(replayed_randomly_immediate_death) 
+        replayed_on_death_immediate_death_sum  = np.sum(replayed_on_death_immediate_death) 
+        env_needed_resetting_before_stepping_sum= np.sum(env_needed_resetting_before_stepping)
 
-        self.logger.record('replay/nr_states', nr_states_mean)
-        self.logger.record('replay/fresh_games', fresh_games_mean)
-        self.logger.record('replay/replayed_randomly', replayed_randomly_mean)
-        self.logger.record('replay/replayed_on_death', replayed_on_death_mean)
-        self.logger.record('replay/replayed_randomly_immediate_death', replayed_randomly_immediate_death_mean)
-        self.logger.record('replay/replayed_on_death_immediate_death', replayed_on_death_immediate_death_mean)
+        self.logger.record('replay/nr_states_mean', nr_states_mean)
+        self.logger.record('replay/fresh_games_mean', fresh_games_mean)
+        self.logger.record('replay/replayed_randomly_mean', replayed_randomly_mean)
+        self.logger.record('replay/replayed_on_death_mean', replayed_on_death_mean)
+        self.logger.record('replay/replayed_randomly_immediate_death_sum', replayed_randomly_immediate_death_sum)
+        self.logger.record('replay/replayed_on_death_immediate_death_sum', replayed_on_death_immediate_death_sum)
+        self.logger.record('replay/env_needed_resetting_before_stepping_sum', env_needed_resetting_before_stepping_sum)
         return True
     
 
@@ -492,6 +514,7 @@ from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import DummyVecEnv
 from stable_baselines3.common.vec_env import VecFrameStack
 from stable_baselines3.common.vec_env import VecTransposeImage
+from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.atari_wrappers import EpisodicLifeEnv, MaxAndSkipEnv, FireResetEnv
 
 
@@ -506,8 +529,10 @@ def wrapper_class_generator(
                   flag_customEndgameResampler,
                   checkDist,
                   max_nr_states,
-                  prob_start_new, 
-                  nr_replays):
+                  prob_start_new,
+                  nr_replays_on_death, 
+                  nr_replays_on_random
+                  ):
     
     def wrap_env(env: gym.Env) -> gym.Env:
         # i chose episodic life wrapper before endgamewrapper, as i want end of a life to be resampled
@@ -515,8 +540,10 @@ def wrapper_class_generator(
             env = EpisodicLifeEnv(env)
             
         if flag_customEndgameResampler:
-            env=ResampleStatesWrapper(env, checkDist, max_nr_states, prob_start_new, nr_replays)
+            env=ResampleStatesWrapper(env, checkDist, max_nr_states, prob_start_new, nr_replays_on_death, nr_replays_on_random)
 
+        env=Monitor(env)
+        
         if MaxAndSkipEnv_skip>0:
             env=MaxAndSkipEnv(env, skip=MaxAndSkipEnv_skip)
         # think about the order - which wrapper goes when
