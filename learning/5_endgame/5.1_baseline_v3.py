@@ -4,9 +4,9 @@
 @author: mreitschuster
 """
 
-
+flag_predict = 'nopredict' # 'nopredict' , 'predict' , 'predict_counters'
 n_envs=8
-name_model='5.1_baseline_v5_nenv'+ str(n_envs)
+name_model='5.1_baseline_v5_nenv'+ str(n_envs) + '_aimbot'+str(flag_predict)
 name_folder='5.1_baseline_v5'
 
 
@@ -80,7 +80,7 @@ env_params={
             'env_id'             : 'ALE/Breakout-v5',# trial.suggest_categorical('env_id', ['Breakout-v4', 'ALE/Breakout-v5']),  
             'flag_col'           : 'mono_1dim',        # '3col', 'grey_3dim', 'grey_1dim',  'mono_3dim', 'mono_1dim'
             'flag_dim'           : 'trim',       # 'blacken', 'whiten', 'keep', 'trim'
-            'flag_predict'       : 'predict',  # 'nopredict' , 'predict' , 'predict_counters'
+            'flag_predict'       : flag_predict,  # 'nopredict' , 'predict' , 'predict_counters'
             'frame_stack'        : 3, #trial.suggest_int('frame_stack', 1, 10),
             'MaxAndSkipEnv_skip' : 0, #trial.suggest_int('MaxAndSkipEnv_skip', 0, 4),
             'flag_FireResetEnv'  : True,
