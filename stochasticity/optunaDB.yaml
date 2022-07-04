@@ -1,0 +1,3 @@
+ 
+dbconnector: mariadb+mariadbconnector://USER:PW/DBNAME
+
