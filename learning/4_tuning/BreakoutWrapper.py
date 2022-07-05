@@ -252,13 +252,16 @@ def create_env(env_id,
                wrapper_class,
                n_envs, 
                seed, 
-               frame_stack):
+               frame_stack,
+               env_kwargs               
+               ):
     
     new_env=make_vec_env(env_id        = env_id, 
                          n_envs        = n_envs, 
                          seed          = seed,
                          wrapper_class = wrapper_class,   # self.env_wrapper is function get_wrapper_class.<locals>.wrap_env  see line 104 in utils.py
-                         vec_env_cls   = DummyVecEnv)    # self.vec_env_class is DummyVecEnv
+                         vec_env_cls   = DummyVecEnv,
+                         env_kwargs = env_kwargs)    # self.vec_env_class is DummyVecEnv
     
     new_env = VecFrameStack(new_env, frame_stack)  # line 556 in exp_manager.py
     new_env = VecTransposeImage(new_env)           # line 578 in exp_manager.py
