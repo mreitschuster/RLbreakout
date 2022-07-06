@@ -4,7 +4,7 @@
 @author: mreitschuster
 """
 
-name_model='4.2_PPO_grid_1'
+name_model='4.2_PPO_grid_2'
 study_name=name_model
 
 import os

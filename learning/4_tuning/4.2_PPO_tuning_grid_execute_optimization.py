@@ -4,7 +4,7 @@
 @author: mreitschuster
 """
 
-name_model='4.2_PPO_grid_1'
+name_model='4.2_PPO_grid_2'
 study_name=name_model
 
 
@@ -30,8 +30,8 @@ from create_objective import create_objective
 # Creating the first Study 
 
 instance_objective = create_objective(N_EVAL_EPISODES    = 100, 
-                                       EVAL_FREQ          = 10, 
-                                       TRAINING_STEPS     = 1e7, 
+                                       EVAL_FREQ          = 4, 
+                                       TRAINING_STEPS     = 1e6, 
                                        n_envs_eval        = 8,
                                        study_name         = study_name,
                                        model_folder       = model_folder,
@@ -47,8 +47,9 @@ import yaml
 dbconnector = yaml.safe_load(open( os.path.expanduser('~/optunaDB.yaml')))['dbconnector']
 
 import optuna
-study1 = optuna.create_study(direction='maximize', storage=dbconnector, study_name=study_name, load_if_exists=True)
+pruner=optuna.pruners.NopPruner()
+study1 = optuna.create_study(direction='maximize', storage=dbconnector, study_name=study_name, load_if_exists=True, pruner=pruner)
 
 
-study1.optimize(instance_objective1)
+study1.optimize(instance_objective)
 
