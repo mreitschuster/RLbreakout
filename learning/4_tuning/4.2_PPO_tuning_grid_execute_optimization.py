@@ -32,7 +32,7 @@ instance_objective = create_objective(N_EVAL_EPISODES    = 30,
                                        tensorboard_folder = tensorboard_folder,
                                        verbose            = 1,
                                        risk_adjustment_stds=1,
-                                       N_rank=int(30/4),    # use lower quartile
+                                       N_Rank=int(30/4),    # use lower quartile
                                        seed=seed
                                        )
 

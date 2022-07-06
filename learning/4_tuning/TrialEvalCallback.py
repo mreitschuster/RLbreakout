@@ -242,7 +242,8 @@ class TrialEvalCallback(EvalCallbackMarkus):
         deterministic: bool = True,
         verbose: int = 0,
         name = None,
-        risk_adjustment_stds=1
+        risk_adjustment_stds=1,
+        N_Rank=None
     ):
 
         super().__init__(
@@ -252,7 +253,8 @@ class TrialEvalCallback(EvalCallbackMarkus):
             deterministic=deterministic,
             verbose=verbose,
             name=name,
-            risk_adjustment_stds=risk_adjustment_stds
+            risk_adjustment_stds=risk_adjustment_stds,
+            N_Rank=N_Rank
         )
         self.name      = name
         self.trial     = trial
