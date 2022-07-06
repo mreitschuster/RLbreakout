@@ -23,9 +23,10 @@ def create_objective(N_EVAL_EPISODES,
               study_name,
               model_folder,
               tensorboard_folder,
+              risk_adjustment_stds,
+              N_rank,
               verbose=0,    # 0 no info, 1 starting summary + name per trial, 2 all learning verbosity
               seed=None
-              
               ):
     
    
@@ -105,7 +106,7 @@ def create_objective(N_EVAL_EPISODES,
         # this is counting in the training environment, which is why we need to adjust for n_envs and not n_envs_eval
         
         EVAL_STEPS            = int(TRAINING_STEPS/EVAL_FREQ/env_params['n_envs']) 
-        eval_callback_v5      = TrialEvalCallback(eval_env_v5,     trial, n_eval_episodes=N_EVAL_EPISODES, eval_freq=EVAL_STEPS, deterministic=False)
+        eval_callback_v5      = TrialEvalCallback(eval_env_v5,     trial, n_eval_episodes=N_EVAL_EPISODES, eval_freq=EVAL_STEPS, deterministic=False, risk_adjustment_stds=risk_adjustment_stds,N_rank=N_rank)
         try:
 
             if verbose>1:
