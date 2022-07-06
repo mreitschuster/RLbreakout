@@ -59,7 +59,7 @@ def create_objective(N_EVAL_EPISODES,
                 
         model_params={
             'policy':               'CnnPolicy',
-            'n_epochs':              trial.suggest_int('batch_size', 1, 16), #4
+            'n_epochs':              trial.suggest_int('n_epochs', 1, 16), #4
             'batch_size':            trial.suggest_int('batch_size', 32, 4096),  # 256,
             'vf_coef':               0.5,  # trial.suggest_uniform('vf_coef',   0.1, 0.9),
             'ent_coef':              0.01, # trial.suggest_loguniform('ent_coef', 0.0001, 0.9),
