@@ -61,5 +61,12 @@ But applying the model to v5, we see it performing poorly on the stochastic envi
 
 hh0rva1h has [pointed out in a discussion](https://github.com/mreitschuster/RLbreakout/issues/1) that besides the stochasticity/determinism there are more differences between the environments that likely have an effect on how models perform on each others environments. The action space is different bertween v4 and v5 and there are determinstic frameskips on the wrapper and environment side. Of course this can be [found in Gym's docu](https://www.gymlibrary.ml/environments/atari/#version-history-and-naming-schemes). So I fixed the code to adjust for those differences. But the main conclusions stay the same.
 
-*Training on a stochastic environment trains slower, but generalizes better to other environments. But trained on NoFrameskip-v4 - a purely deterministic environment trains fast, but transfers poorly to a stochastic environment.*
+**Training on a stochastic environment trains slower, but generalizes better to other environments. But trained on NoFrameskip-v4 - a purely deterministic environment trains fast, but transfers poorly to a stochastic environment.**
 
+![tensorboard showing that model trained on NoFrameskip performs poorly on v4 and v5 environment](../pictures/4.1_PPO_env_comparison_tb.png)
+Orange line is the model trained on v4, Blue on NoFrameskip-v4 and Red on v5. In the eval section we see 3 new graphs:
+*eval/v4/mean_reward*
+*eval/v4NoFS/mean_reward*
+*eval/v5/mean_reward*
+They are individual eval callback for each environments - we train a model once and let it run through all 3 callbacks.
+We see that Blue performs better on NoFrameskip-v4, but worse on v4 and v5.
