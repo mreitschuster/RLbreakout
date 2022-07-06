@@ -65,8 +65,12 @@ hh0rva1h has [pointed out in a discussion](https://github.com/mreitschuster/RLbr
 
 ![tensorboard showing that model trained on NoFrameskip performs poorly on v4 and v5 environment](../pictures/4.1_PPO_env_comparison_tb.png)
 Orange line is the model trained on v4, Blue on NoFrameskip-v4 and Red on v5. In the eval section we see 3 new graphs:
+
 *eval/v4/mean_reward*
+
 *eval/v4NoFS/mean_reward*
+
 *eval/v5/mean_reward*
+
 They are individual eval callback for each environments - we train a model once and let it run through all 3 callbacks.
 We see that Blue performs better on NoFrameskip-v4, but worse on v4 and v5.
