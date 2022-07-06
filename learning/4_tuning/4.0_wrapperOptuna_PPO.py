@@ -17,14 +17,11 @@ seed=123
 
 #%%
 from BreakoutWrapper import wrapper_class_generator, create_env
-
+from TrialEvalCallback import TrialEvalCallback
 
 #%%
-from stable_baselines3.common.callbacks import EvalCallback
-import gym
-import optuna
 
-class TrialEvalCallback(EvalCallback):
+
     """Callback used for evaluating and reporting a trial."""
 
     def __init__(
@@ -70,9 +67,7 @@ def create_objective(N_EVAL_EPISODES,
               verbose=0    # 0 no info, 1 starting summary + name per trial, 2 all learning verbosity
               ):
     
-
-    
-    
+   
     def objective(trial):
         model_params={
             'policy':               'CnnPolicy',
@@ -95,8 +90,27 @@ def create_objective(N_EVAL_EPISODES,
             'frame_stack'        : trial.suggest_int('frame_stack', 1, 10),
             'MaxAndSkipEnv_skip' : trial.suggest_int('MaxAndSkipEnv_skip', 0, 4),
             'flag_FireResetEnv'  : True,
-            'n_envs'             : trial.suggest_int('n_envs', 1,16)
+            'n_envs'             : trial.suggest_int('n_envs', 1,16),
+            'full_action_space'  :False
             }
+        if env_params['env_id']=='Breakout-v4':
+            env_kwargs={'full_action_space'         : False,
+                        'repeat_action_probability' : 0.,
+                        'frameskip'                 : (2,5,)
+                        }
+            
+        elif env_params['env_id']=='BreakoutNoFrameskip-v4':
+            env_kwargs={'full_action_space'         : False,
+                        'repeat_action_probability' : 0.,
+                        'frameskip'                 : 2)
+                        }
+            
+        elif env_params['env_id']=='ALE/Breakout-v5':
+            env_kwargs={'full_action_space'         : False,
+                        'repeat_action_probability' : 0.25,
+                        'frameskip'                 : 2
+                        }
+        
         tb_log_name     = study_name+ "_trial"+str(trial.number)
         
         if verbose>0:

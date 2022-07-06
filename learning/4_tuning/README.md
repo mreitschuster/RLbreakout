@@ -55,3 +55,11 @@ On the deterministic environment 'NoFrameskip-v4' it is not in sync (even if we 
 ![AI playing 9 almost perfectly similar games badly](../video/9.3_VM_A2C_v5_9env.gif)
 
 But applying the model to v5, we see it performing poorly on the stochastic environment. My guess is that the model just memorizes 30 different sequences.
+
+# More Devils - differences in environments
+## [4.1_PPO_env_comparison](https://github.com/mreitschuster/RLbreakout/blob/master/learning/4_tuning/4.1_PPO_env_comparison.py)
+
+hh0rva1h has [pointed out in a discussion](https://github.com/mreitschuster/RLbreakout/issues/1) that besides the stochasticity/determinism there are more differences between the environments that likely have an effect on how models perform on each others environments. The action space is different bertween v4 and v5 and there are determinstic frameskips on the wrapper and environment side. Of course this can be [found in Gym's docu](https://www.gymlibrary.ml/environments/atari/#version-history-and-naming-schemes). So I fixed the code to adjust for those differences. But the main conclusions stay the same.
+
+*Training on a stochastic environment trains slower, but generalizes better to other environments. But trained on NoFrameskip-v4 - a purely deterministic environment trains fast, but transfers poorly to a stochastic environment.*
+

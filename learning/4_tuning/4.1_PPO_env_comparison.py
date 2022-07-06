@@ -75,7 +75,7 @@ def create_objective(N_EVAL_EPISODES,
         }
         env_params={
             'train_env_id'            : trial.suggest_categorical('train_env_id', ['Breakout-v4', 'BreakoutNoFrameskip-v4', 'ALE/Breakout-v5']),  
-            'eval_env_id'             : trial.suggest_categorical('eval_env_id', ['Breakout-v4', 'BreakoutNoFrameskip-v4', 'ALE/Breakout-v5']),  
+            #'eval_env_id'             : trial.suggest_categorical('eval_env_id', ['Breakout-v4', 'BreakoutNoFrameskip-v4', 'ALE/Breakout-v5']),  
             # https://www.gymlibrary.ml/environments/atari/breakout/
             'flag_col'     : 'mono_1dim',        # '3col', 'grey_3dim', 'grey_1dim',  'mono_3dim', 'mono_1dim'
             'flag_dim'     : 'trim',       # 'blacken', 'whiten', 'keep', 'trim'
@@ -90,7 +90,6 @@ def create_objective(N_EVAL_EPISODES,
         frameskip_env = trial.suggest_int('frameskip_env', 1, 8)
         
         env_params['train_env_kwargs'] = env_kwargs(env_params['train_env_id'], frameskip_env)
-        env_params['eval_env_kwargs']  = env_kwargs(env_params['eval_env_id'] , frameskip_env)
         
         tb_log_name     = study_name+ "_trial"+str(trial.number)
         
@@ -137,9 +136,9 @@ def create_objective(N_EVAL_EPISODES,
             print(e)
         finally:
             train_env.close()
-            eval_callback_v4.close()   
-            eval_callback_v4NoFS.close()   
-            eval_callback_v5.close()   
+            eval_env_v4.close()   
+            eval_env_v4NoFS.close()   
+            eval_env_v5.close()   
         
         #if eval_callback_v5.is_pruned:
         #    raise optuna.exceptions.TrialPruned()
@@ -148,7 +147,7 @@ def create_objective(N_EVAL_EPISODES,
     return objective
 #%%
 # Creating the first Study 
-study_name='4.1_PPO_envs_11'
+study_name='4.1_PPO_envs_12'
 
 instance_objective1 = create_objective(N_EVAL_EPISODES   = 100, 
                                        EVAL_FREQ         = 10, 
