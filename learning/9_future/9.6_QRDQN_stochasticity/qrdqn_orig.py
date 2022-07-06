@@ -27,12 +27,8 @@ N_EVAL_EPISODES=24
 
 #%%
 import yaml
-with open('optunaDB.yaml') as file:
-    try:
-        databaseConfig = yaml.safe_load(file)   
-        print(databaseConfig)
-    except yaml.YAMLError as exc:
-        print(exc)
+dbconnector = yaml.safe_load(open('optunaDB.yaml'))['dbconnector']
+
 # fill the optunaDB.yaml
 # either adjust path or put it into your home directory
 
@@ -175,7 +171,7 @@ instance_objective = create_objective(N_EVAL_EPISODES    = 20,
 #%%
 import optuna
 study = optuna.create_study(
-                storage=databaseConfig['dbconnector'],
+                storage=dbconnector,
                 load_if_exists=True,
                 study_name='stochasticity'
         )
