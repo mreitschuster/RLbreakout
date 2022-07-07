@@ -164,7 +164,7 @@ class EvalCallbackMarkus(EventCallback):
             median_reward=np.median(episode_rewards)
             mean_ep_length, std_ep_length = np.mean(episode_lengths), np.std(episode_lengths)
             self.last_mean_reward  = mean_reward
-            self.last_media_reward = median_reward
+            self.last_median_reward = median_reward
             self.last_cons_reward  = cons_reward
 
             if self.verbose > 0:
