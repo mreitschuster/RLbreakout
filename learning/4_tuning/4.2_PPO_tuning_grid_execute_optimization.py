@@ -4,7 +4,7 @@
 @author: mreitschuster
 """
 
-name_model='4.2_PPO_grid_3'
+name_model='4.2_PPO_grid_4'
 study_name=name_model
 
 
@@ -47,5 +47,5 @@ pruner=optuna.pruners.NopPruner()
 study1 = optuna.create_study(direction='maximize', storage=dbconnector, study_name=study_name, load_if_exists=True, pruner=pruner)
 
 
-study1.optimize(instance_objective, n_trials=3)
+study1.optimize(instance_objective)
 

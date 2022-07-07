@@ -163,7 +163,9 @@ class EvalCallbackMarkus(EventCallback):
             N_Rank_reward=np.partition(episode_rewards, self.N_Rank)[self.N_Rank]
             median_reward=np.median(episode_rewards)
             mean_ep_length, std_ep_length = np.mean(episode_lengths), np.std(episode_lengths)
-            self.last_mean_reward = mean_reward
+            self.last_mean_reward  = mean_reward
+            self.last_media_reward = median_reward
+            self.last_cons_reward  = cons_reward
 
             if self.verbose > 0:
                 print(f"Eval num_timesteps={self.num_timesteps}, " f"episode_reward={mean_reward:.2f} +/- {std_reward:.2f}")

@@ -108,15 +108,10 @@ def create_objective(N_EVAL_EPISODES,
         EVAL_STEPS            = int(TRAINING_STEPS/EVAL_FREQ/env_params['n_envs']) 
         eval_callback_v5      = TrialEvalCallback(eval_env_v5,     trial, n_eval_episodes=N_EVAL_EPISODES, eval_freq=EVAL_STEPS, deterministic=False, risk_adjustment_stds=risk_adjustment_stds,N_Rank=N_Rank)
         try:
-
-            if verbose>1:
-                flag_verbose=1
-            else:
-                flag_verbose=0
-                
+               
             model = PPO(env=train_env, 
                          seed            = seed,
-                         verbose        = flag_verbose, 
+                         verbose        = (verbose>=1), 
                          tensorboard_log = tensorboard_folder,
                          **model_params) 
             model.learn(total_timesteps = TRAINING_STEPS,
@@ -133,5 +128,6 @@ def create_objective(N_EVAL_EPISODES,
         if eval_callback_v5.is_pruned:
             raise optuna.exceptions.TrialPruned()
     
-        return eval_callback_v5.last_mean_reward
+        #return eval_callback_v5.last_mean_reward
+        return eval_callback_v5.last_median_reward
     return objective
