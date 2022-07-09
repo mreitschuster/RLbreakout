@@ -268,7 +268,7 @@ class TrialEvalCallback(EvalCallbackMarkus):
         if self.eval_freq > 0 and self.n_calls % self.eval_freq == 0:
             super()._on_step()
             self.eval_idx += 1
-            self.trial.report(self.last_mean_reward, self.eval_idx)
+            self.trial.report(self.last_median_reward, self.eval_idx)
             
             #if self.name is not None:
             #    self.logger.record("eval/"+self.name+"/mean_reward", float(self.last_mean_reward))

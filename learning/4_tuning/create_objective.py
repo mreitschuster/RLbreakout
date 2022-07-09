@@ -122,9 +122,12 @@ def create_objective(N_EVAL_EPISODES,
         except AssertionError as e:
             print(e)
         finally:
-            train_env.close()  
-            eval_env_v5.close()   
+            try: train_env.close()  
+            except: train_env = None
         
+            try: eval_env_v5.close()  
+            except: eval_env_v5 = None
+                
         if eval_callback_v5.is_pruned:
             raise optuna.exceptions.TrialPruned()
     
