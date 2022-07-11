@@ -17,7 +17,7 @@ from stable_baselines3.common import base_class  # pytype: disable=pyi-error
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.vec_env import DummyVecEnv, VecEnv, sync_envs_normalization
 
-class EvalCallbackMarkus(EventCallback):
+class EvalCallbackStats(EventCallback):
     
     def __init__(
         self,
@@ -232,7 +232,7 @@ class EvalCallbackMarkus(EventCallback):
 import gym
 import optuna
 
-class TrialEvalCallback(EvalCallbackMarkus):
+class TrialEvalCallback(EvalCallbackStats):
     """Callback used for evaluating and reporting a trial."""
 
     def __init__(
