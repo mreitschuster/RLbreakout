@@ -85,9 +85,43 @@ if False:
     
     study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 6, 'batch_size': int(8*(2**9)), 'n_steps': int(2*64), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8}) 
     study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 8, 'batch_size': int(8*(2**9)), 'n_steps': int(2*64), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8})  
+    
+    # taking optimal point from steps/batch:_ 'batch_size': 1536, 'n_steps': 384
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 2, 'batch_size': int((2**9)*3), 'n_steps': int((2*64)*3), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8}) 
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 3, 'batch_size': int((2**9)*3), 'n_steps': int((2*64)*3), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8}) 
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 4, 'batch_size': int((2**9)*3), 'n_steps': int((2*64)*3), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8}) 
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 5, 'batch_size': int((2**9)*3), 'n_steps': int((2*64)*3), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8}) 
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 6, 'batch_size': int((2**9)*3), 'n_steps': int((2*64)*3), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8}) 
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 7, 'batch_size': int((2**9)*3), 'n_steps': int((2*64)*3), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8}) 
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 8, 'batch_size': int((2**9)*3), 'n_steps': int((2*64)*3), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8}) 
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 10, 'batch_size': int((2**9)*3), 'n_steps': int((2*64)*3), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8}) 
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 12, 'batch_size': int((2**9)*3), 'n_steps': int((2*64)*3), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8}) 
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 14, 'batch_size': int((2**9)*3), 'n_steps': int((2*64)*3), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8}) 
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 16, 'batch_size': int((2**9)*3), 'n_steps': int((2*64)*3), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8}) 
+    
+    # more pint on  batch_size': 3072
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 8, 'batch_size': int(3072), 'n_steps': int((2*64)*3), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8}) 
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 6, 'batch_size': int(3072), 'n_steps': int((2*64)*3), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8}) 
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 8, 'batch_size': int(3072), 'n_steps': int((2*64)*4), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8}) 
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 6, 'batch_size': int(3072), 'n_steps': int((2*64)*4), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8}) 
+    
+    # some more to fill up the plots
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 8, 'batch_size': int(3072), 'n_steps': int(64), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8}) 
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 6, 'batch_size': int(3072), 'n_steps': int(64), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8}) 
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 8, 'batch_size': int(3072), 'n_steps': int((2*64)*2), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8}) 
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 6, 'batch_size': int(3072), 'n_steps': int((2*64)*2), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8}) 
+    
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 6, 'batch_size': int(1536), 'n_steps': int((2*64)*4), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8}) 
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 8, 'batch_size': int(1536), 'n_steps': int((2*64)*4), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8}) 
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 6, 'batch_size': int(1536), 'n_steps': int((2*64)*6), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8}) 
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 8, 'batch_size': int(1536), 'n_steps': int((2*64)*6), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8}) 
+       
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 6, 'batch_size': int(768), 'n_steps': int((2*64)*3), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8}) 
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 8, 'batch_size': int(768), 'n_steps': int((2*64)*3), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8}) 
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 6, 'batch_size': int(2048), 'n_steps': int((2*64)*3), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8}) 
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 'n_epochs': 8, 'batch_size': int(2048), 'n_steps': int((2*64)*3), 'frame_stack': 4, 'frameskip_env': 4, 'n_envs': 8}) 
 if True: 
 
-    
     pass
 if False:
     pass 

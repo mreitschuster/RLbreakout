@@ -72,5 +72,15 @@ Orange line is the model trained on v4, Blue on NoFrameskip-v4 and Red on v5. In
 
 *eval/v5/mean_reward*
 
-They are individual eval callback for each environments - we train a model once and let it run through all 3 callbacks.
-We see that Blue performs better on NoFrameskip-v4, but worse on v4 and v5.
+They are individual eval callback for each environments - we train a model once and let it run through all 3 callbacks. The callback had tro be modified to allow for arbitrary naming. We see that Blue performs better on NoFrameskip-v4, but worse on v4 and v5.
+
+
+# [4.2_PPO_tuning_grid_define_study](https://github.com/mreitschuster/RLbreakout/blob/master/learning/4_tuning/4.2_PPO_tuning_grid_define_study.py)
+In this code pieces finally dive into some hyperparameter tuning - espcially into the effects of batch_size, n_epochs and n_steps.
+[TrialEvalCallback.py](https://github.com/mreitschuster/RLbreakout/blob/master/learning/4_tuning/TrialEvalCallback.py) contains a modified version of evalCallback that allows us to track some more statistical measures in tensoboard - especially the median.
+
+
+
+# [4.3_PPO_tuning_bestrun.py](https://github.com/mreitschuster/RLbreakout/blob/master/learning/4_tuning/4.3_PPO_tuning_bestrun.py)
+in order to allow for longer running trainings we need to consider how to adapt the sheduler. We expect that when we train a model for a different number of timesteps, once with 1e6 and once with 1e7, all else being equal that on the way, at any step <1e6, both produce the same results. That is not true for linear shedules. They are not scale-invariant. So I introduced a exponential sheduler. The adapted objective function allows for the choice of sheduler to be a hyperparameter.
+[create_objective_shedule.py](https://github.com/mreitschuster/RLbreakout/blob/master/learning/4_tuning/create_objective_shedule.py)
