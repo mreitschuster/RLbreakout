@@ -46,8 +46,8 @@ import optuna
 pruner=optuna.pruners.NopPruner()
 study1 = optuna.create_study(direction='maximize', storage=dbconnector, study_name=study_name, load_if_exists=True, pruner=pruner)
 
-#if False:
-if True:
+if False:
+#if True:
     # base
     study1.enqueue_trial({'train_env_id': 'Breakout-v4', 
                           'n_epochs': 6, 
