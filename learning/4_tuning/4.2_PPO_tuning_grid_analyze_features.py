@@ -92,7 +92,7 @@ new_study = subset_study(new_study,'train_env_id',"Breakout-v4")
 fig1=optuna.visualization.matplotlib.plot_contour(new_study, params=["batch_size", "n_steps"])
 fig1.title.set_text('epochs=4')
 fig1=optuna.visualization.matplotlib.plot_contour(study, params=["batch_size", "n_steps"])
-fig1.title.set_text('epochs=4')
+fig1.title.set_text('all')
 
 
 # batch-size & epochs
@@ -106,7 +106,7 @@ new_study = subset_study(new_study,'train_env_id',"Breakout-v4")
 fig1=optuna.visualization.matplotlib.plot_contour(new_study, params=["batch_size", "n_epochs"])
 fig1.title.set_text('n_steps=128')
 fig1=optuna.visualization.matplotlib.plot_contour(study, params=["batch_size", "n_epochs"])
-fig1.title.set_text('n_steps=128')
+fig1.title.set_text('all')
 
 # n_steps & epochs at base point
 new_study = study
@@ -119,7 +119,7 @@ new_study = subset_study(new_study,'train_env_id',"Breakout-v4")
 fig1=optuna.visualization.matplotlib.plot_contour(new_study, params=["n_steps", "n_epochs"])
 fig1.title.set_text('batch_size=3072')
 fig1=optuna.visualization.matplotlib.plot_contour(study, params=["n_steps", "n_epochs"])
-fig1.title.set_text('batch_size=3072')
+fig1.title.set_text('all')
 
 # steps/epochs at 1st optimal  'batch_size': int((2**9)*3), 'n_steps': int((2*64)*3)
 new_study = study
@@ -129,8 +129,6 @@ new_study = subset_study(new_study,'train_env_id',"Breakout-v4")
 new_study = subset_study(new_study,'n_envs',8)
 new_study = subset_study(new_study,'batch_size', int((2**9)*3))
 fig1=optuna.visualization.matplotlib.plot_contour(new_study, params=["n_steps", "n_epochs"])
-fig1.title.set_text('batch_size=1536')
-fig1=optuna.visualization.matplotlib.plot_contour(study, params=["n_steps", "n_epochs"])
 fig1.title.set_text('batch_size=1536')
 
 
@@ -142,6 +140,4 @@ new_study = subset_study(new_study,'train_env_id',"Breakout-v4")
 new_study = subset_study(new_study,'n_envs',8)
 new_study = subset_study(new_study,'n_steps',    int((2*64)*3))
 fig1=optuna.visualization.matplotlib.plot_contour(new_study, params=["batch_size", "n_epochs"])
-fig1.title.set_text('n_steps=384')
-fig1=optuna.visualization.matplotlib.plot_contour(study, params=["batch_size", "n_epochs"])
 fig1.title.set_text('n_steps=384')
