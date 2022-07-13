@@ -4,7 +4,7 @@
 @author: mreitschuster
 """
 
-name_model='4.3_PPO_tuning_shedules_10'
+name_model='4.3_PPO_tuning_shedules_1'
 study_name=name_model
 
 
@@ -179,4 +179,101 @@ if False:
                           })
 
 
-study1.optimize(instance_objective)
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 
+                          'n_epochs': 6, 
+                          'batch_size': 3072, 
+                          'n_steps': 128, 
+                          'frame_stack': 4, 
+                          'frameskip_env': 4, 
+                          'n_envs': 8,
+                          'learning_rate_init': 10e-4,
+                          'clip_range_init':    .2,
+                          'lr_shedule': 'exponential',
+                          'clip_shedule': 'constant',
+                          'target_factor': 0.1
+                          })
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 
+                          'n_epochs': 6, 
+                          'batch_size': 3072, 
+                          'n_steps': 128, 
+                          'frame_stack': 4, 
+                          'frameskip_env': 4, 
+                          'n_envs': 8,
+                          'learning_rate_init': 10e-4,
+                          'clip_range_init':    .2,
+                          'lr_shedule': 'exponential',
+                          'clip_shedule': 'exponential',
+                          'target_factor': 0.1
+                          })
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 
+                          'n_epochs': 6, 
+                          'batch_size': 3072, 
+                          'n_steps': 128, 
+                          'frame_stack': 4, 
+                          'frameskip_env': 4, 
+                          'n_envs': 8,
+                          'learning_rate_init': 10e-4,
+                          'clip_range_init':    .2,
+                          'lr_shedule': 'exponential',
+                          'clip_shedule': 'linear',
+                          'target_factor': 0.1
+                          })
+    
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 
+                          'n_epochs': 6, 
+                          'batch_size': 3072, 
+                          'n_steps': 128, 
+                          'frame_stack': 4, 
+                          'frameskip_env': 4, 
+                          'n_envs': 8,
+                          'learning_rate_init': 20e-4,
+                          'clip_range_init':    .2,
+                          'lr_shedule': 'exponential',
+                          'clip_shedule': 'constant',
+                          'target_factor': 0.1
+                          })
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 
+                          'n_epochs': 6, 
+                          'batch_size': 3072, 
+                          'n_steps': 128, 
+                          'frame_stack': 4, 
+                          'frameskip_env': 4, 
+                          'n_envs': 8,
+                          'learning_rate_init': 30e-4,
+                          'clip_range_init':    .2,
+                          'lr_shedule': 'exponential',
+                          'clip_shedule': 'constant',
+                          'target_factor': 0.1
+                          })
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 
+                          'n_epochs': 6, 
+                          'batch_size': 3072, 
+                          'n_steps': 128, 
+                          'frame_stack': 4, 
+                          'frameskip_env': 4, 
+                          'n_envs': 8,
+                          'learning_rate_init': 40e-4,
+                          'clip_range_init':    .2,
+                          'lr_shedule': 'exponential',
+                          'clip_shedule': 'constant',
+                          'target_factor': 0.1
+                          })
+    study1.enqueue_trial({'train_env_id': 'Breakout-v4', 
+                          'n_epochs': 6, 
+                          'batch_size': 3072, 
+                          'n_steps': 128, 
+                          'frame_stack': 4, 
+                          'frameskip_env': 4, 
+                          'n_envs': 8,
+                          'learning_rate_init': 50e-4,
+                          'clip_range_init':    .2,
+                          'lr_shedule': 'exponential',
+                          'clip_shedule': 'constant',
+                          'target_factor': 0.1
+                          })
+#study1.optimize(instance_objective)
+fig1=optuna.visualization.matplotlib.plot_contour(study1, 
+                                                  params=["clip_shedule", "clip_range_init", "learning_rate_init", "target_factor" ])
+
+#fig1=optuna.visualization.matplotlib.plot_contour(study1, params=["learning_rate_init", "target_factor"])
+#fig1.title.set_text('all')

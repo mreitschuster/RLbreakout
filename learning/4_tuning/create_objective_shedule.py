@@ -86,13 +86,13 @@ def create_objective(N_EVAL_EPISODES,
             'vf_coef':               0.5,  # trial.suggest_uniform('vf_coef',   0.1, 0.9),
             'ent_coef':              0.01, # trial.suggest_loguniform('ent_coef', 0.0001, 0.9),
             'n_steps':               trial.suggest_int('n_steps', 32, 4096),
-            'learning_rate_init':    trial.suggest_loguniform('learning_rate_init', 1e-6, 100),
-            'clip_range_init':       trial.suggest_loguniform('clip_range_init',    1e-4, 0.9 ),
+            'learning_rate_init':    trial.suggest_loguniform('learning_rate_init', 1e-10, 100),
+            'clip_range_init':       trial.suggest_loguniform('clip_range_init',    1e-10, 0.9999 ),
             #'gamma':                 trial.suggest_loguniform('gamma', 0.8, 0.9999),
             #'gae_lambda':            trial.suggest_uniform('gae_lambda', 0.8, 0.99)
             'lr_shedule'            : trial.suggest_categorical('lr_shedule', ['constant', 'linear', 'exponential']),  
             'clip_shedule'            : trial.suggest_categorical('clip_shedule', ['constant', 'linear', 'exponential']),  
-            'target_factor':         trial.suggest_loguniform('target_factor', 1e-6, 1e-3),
+            'target_factor':         trial.suggest_loguniform('target_factor', 1e-6,1),
         }
         if model_params['lr_shedule'] == 'constant':
             model_params['learning_rate'] = model_params['learning_rate_init']

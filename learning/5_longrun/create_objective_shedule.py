@@ -23,9 +23,9 @@ def linear_schedule(initial_value: Union[float, str]) -> Callable[[float], float
     return func
 
 import math
-def exponential_schedule(initial_value: float, distance: float, target_value_at_end: float) -> Callable[[float], float]:
+def exponential_schedule(initial_value: float, distance: float, delta: float) -> Callable[[float], float]:
     
-    delta = math.log(initial_value/target_value_at_end)/distance
+    #delta = math.log(initial_value/target_value_at_end)/distance
     
     def func(progress_remaining: float) -> float:
         return (initial_value*math.exp(-1 * delta * (1-progress_remaining) * distance))
@@ -92,14 +92,14 @@ def create_objective(N_EVAL_EPISODES,
             #'gae_lambda':            trial.suggest_uniform('gae_lambda', 0.8, 0.99)
             'lr_shedule'            : trial.suggest_categorical('lr_shedule', ['constant', 'linear', 'exponential']),  
             'clip_shedule'            : trial.suggest_categorical('clip_shedule', ['constant', 'linear', 'exponential']),  
-            'target_factor':         trial.suggest_loguniform('target_factor', 1e-6,1),
+            'delta':         trial.suggest_loguniform('delta', 1e-10,1),
         }
         if model_params['lr_shedule'] == 'constant':
             model_params['learning_rate'] = model_params['learning_rate_init']
         elif model_params['lr_shedule'] == 'linear':
             model_params['learning_rate'] = linear_schedule(model_params['learning_rate_init'])
         elif model_params['lr_shedule'] == 'exponential':
-            model_params['learning_rate'] = exponential_schedule(model_params['learning_rate_init'], 1e8, model_params['learning_rate_init']*model_params['target_factor'])
+            model_params['learning_rate'] = exponential_schedule(model_params['learning_rate_init'], TRAINING_STEPS ,  model_params['delta'])
         else: raise NameError("not found")
         
         if model_params['clip_shedule'] == 'constant':
@@ -107,14 +107,14 @@ def create_objective(N_EVAL_EPISODES,
         elif model_params['clip_shedule'] == 'linear':
             model_params['clip_range'] = linear_schedule(model_params['clip_range_init'])
         elif model_params['clip_shedule'] == 'exponential':
-            model_params['clip_range'] = exponential_schedule(model_params['clip_range_init'], 1e8, model_params['clip_range_init']* model_params['target_factor'])
+            model_params['clip_range'] = exponential_schedule(model_params['clip_range_init'], TRAINING_STEPS , model_params['delta'])
         else: raise NameError("not found")
             
         del model_params['learning_rate_init'] 
         del model_params['lr_shedule'] 
         del model_params['clip_range_init'] 
-        del model_params['clip_shedule'] 
-        del model_params['target_factor'] 
+        del model_params['clip_shedule']  
+        del model_params['delta'] 
         
         env_params={
             'train_env_id'            : trial.suggest_categorical('train_env_id', ['Breakout-v4', 'BreakoutNoFrameskip-v4', 'ALE/Breakout-v5']),  

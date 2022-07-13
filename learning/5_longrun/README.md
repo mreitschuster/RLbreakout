@@ -1,14 +1,17 @@
+# TLDR
+We now have our final model trained on a stochastic environment and scoring well around 350
 
-4.1
-pip install sb3-contrib
+The last video tackles the hyperparameter tuning as well as adapting the shedulers.
+
+**Train RL model to play Breakout - Howto 5/5** Video link - click on the picture.
+[![RL Breakout 5/5](../pictures/thumbnails/4_tuning.png)](https://youtu.be/IFvyvnG-jus)
 
 
-5.5 longtrain
-exponential shedule
-issue with eval env being stuck and draining fps
+
+# [5.1_baseline_v5.py](./5.1_baseline_v5.py)
+This code recreates the baselines we already had in chapter 2 and 3 for more trianing steps.
 
 
-python train.py --algo qrdqn --env ALE/Breakout-v5 -n 10000000 --tensorboard-log ~/models/breakout-v4/tb_log/5.1_baseline_qrdqn/qrdqn_zoo_v5
-
-python train.py --algo qrdqn --env Breakout-v4 -n 10000000 --tensorboard-log ~/models/breakout-v4/tb_log/5.1_baseline_qrdqn/qrdqn_zoo_v4
+# [5.1_PPO_summary.py](./5.1_PPO_summary.py)
+Here we run the optimal hyperparameter determined in [4_tuning](../4_tuning) for a longer training period.
 
